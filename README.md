@@ -11,7 +11,7 @@ An AI-powered computer vision system that analyzes human movements from video re
 - **Comprehensive Reports**: Generate detailed risk reports with recommendations
 
 ---
-d
+
 ## 🚀 Quick Start
 
 ### 1. Activate Virtual Environment

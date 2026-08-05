@@ -7,6 +7,10 @@ import sys
 import os
 from pathlib import Path
 
+# Force UTF-8 output on Windows to support emoji in print statements
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
 # Add project root to path so src package is importable
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -31,7 +35,7 @@ def run_full_analysis(video_path, output_name=None, save_annotated=False):
     video_file = Path(video_path)
     
     if not video_file.exists():
-        print(f"❌ Error: Video file not found: {video_path}")
+        print(f"[ERROR] Video file not found: {video_path}")
         return
     
     # Determine output name
@@ -84,23 +88,23 @@ def run_full_analysis(video_path, output_name=None, save_annotated=False):
         print("\n" + "="*60)
         print("ANALYSIS COMPLETE!")
         print("="*60)
-        print(f"\n📊 Overall Risk Score: {report['overall_risk']}/100")
-        print(f"🎯 Risk Level: {report['risk_level']}")
-        print(f"\n📁 Output Location: data/output/{output_name}/")
+        print(f"\n[RESULT] Overall Risk Score: {report['overall_risk']}/100")
+        print(f"[RESULT] Risk Level: {report['risk_level']}")
+        print(f"\n[OUTPUT] Location: data/output/{output_name}/")
         print(f"   - landmarks_33_data.csv")
         print(f"   - frame_features.csv")
         print(f"   - movement_summary.csv")
         print(f"   - risk_report.json")
         
         if report['alerts']:
-            print(f"\n⚠️  {len(report['alerts'])} Alert(s) Detected")
+            print(f"\n[WARNING] {len(report['alerts'])} Alert(s) Detected")
         
         print("\n" + "="*60)
         
         return report
         
     except Exception as e:
-        print(f"\n❌ Error during analysis: {str(e)}")
+        print(f"\n[ERROR] Error during analysis: {str(e)}")
         import traceback
         traceback.print_exc()
         return None
