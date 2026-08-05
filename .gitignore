@@ -1,0 +1,153 @@
+# ==========================
+# Python
+# ==========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# ==========================
+# Virtual Environments
+# ==========================
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+.virtualenv/
+
+# ==========================
+# IDEs & Editors
+# ==========================
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# Spyder
+.spyderproject.cfg
+.spyproject/
+
+# ==========================
+# Data & Media Files
+# ==========================
+# Input/output videos
+data/input_videos/
+data/output/
+data/temp/
+
+# Large data files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.flv
+
+# Model files
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.onnx
+*.tflite
+
+# ==========================
+# Output / Generated Files
+# ==========================
+*.xlsx
+*.csv
+*.json
+!config/*.json
+
+# ==========================
+# Logs
+# ==========================
+*.log
+logs/
+
+# ==========================
+# OS Files
+# ==========================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# ==========================
+# MediaPipe / OpenCV cache
+# ==========================
+mediapipe_analyzer/
+*.task
+
+# ==========================
+# Misc
+# ==========================
+.env
+.env.local
+*.tmp
+*.bak
+*.swp
