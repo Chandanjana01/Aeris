@@ -1,6 +1,6 @@
-# Ergonomic Risk Analysis System
+# AERIS: AI-Powered Ergonomic Risk Inspection System
 
-A complete AI-powered system for analyzing human movement and assessing ergonomic risks from video recordings.
+An AI-powered computer vision system that analyzes human movements from video recordings, detects ergonomic hazards, evaluates posture using pose estimation, calculates ergonomic risk scores (REBA/RULA), and generates actionable assessment reports.
 
 ## 📋 Features
 
@@ -11,7 +11,7 @@ A complete AI-powered system for analyzing human movement and assessing ergonomi
 - **Comprehensive Reports**: Generate detailed risk reports with recommendations
 
 ---
-
+d
 ## 🚀 Quick Start
 
 ### 1. Activate Virtual Environment
