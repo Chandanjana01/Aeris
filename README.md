@@ -1,271 +1,228 @@
 # AERIS: AI-Powered Ergonomic Risk Inspection System
 
-An AI-powered computer vision system that analyzes human movements from video recordings, detects ergonomic hazards, evaluates posture using pose estimation, calculates ergonomic risk scores (REBA/RULA), and generates actionable assessment reports.
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.111+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![MediaPipe](https://img.shields.io/badge/MediaPipe-Pose_33-00C7B7?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker)
+[![OpenCV](https://img.shields.io/badge/OpenCV-Computer_Vision-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)](https://opencv.org/)
 
-## 📋 Features
-
-- **Video Processing**: Extract frames from video files
-- **Pose Detection**: AI-powered 33-landmark body tracking using MediaPipe
-- **Biomechanical Analysis**: Calculate joint angles, trunk lean, knee valgus, symmetry
-- **Risk Assessment**: Automated scoring for knee, hip, spine, and fatigue risks
-- **Comprehensive Reports**: Generate detailed risk reports with recommendations
+**AERIS** is a computer vision and biomechanical risk assessment platform. It processes video footage to analyze human body kinematics, detect posture abnormalities, calculate dynamic joint metrics, evaluate ergonomic risk factors (knee valgus, trunk lean, symmetry, landing mechanics), and deliver structured risk reports via an asynchronous REST API or CLI pipeline.
 
 ---
 
-## 🚀 Quick Start
+## 🌟 Key Features
 
-### 1. Activate Virtual Environment
-```powershell
-.\.venv\Scripts\Activate.ps1
+- ⚡ **Asynchronous REST API**: Powered by FastAPI with daemon thread execution and real-time job status polling (`POST /analyze`, `GET /status/{job_id}`, `GET /report/{job_id}`).
+- 🎯 **33-Landmark AI Tracking**: Leverages MediaPipe's high-precision Pose Landmarker model to capture spatial body coordinates frame-by-frame.
+- 📐 **Biomechanical Feature Extraction**: Calculates 15 real-time metrics per frame including 8 joint angles, trunk lean angle, knee valgus collapse, left-right symmetry, and 3D Center of Mass (COM).
+- ⚖️ **Weighted Risk Engine**: Evaluates joint Range of Motion (ROM), stability, and form degradation to compute weighted risk scores across body regions (Knee, Spine, Hip, Fatigue).
+- 🧹 **Automated Data Lifecycle**: Automatically cleans up temporary frame directories and intermediate raw CSVs post-analysis, preserving only the final structured `risk_report.json`.
+
+---
+
+## 🏗️ Project Architecture & Structure
+
 ```
-
-### 2. Process a Video (Complete Workflow)
-
-#### Step 1: Extract Frames
-```powershell
-python opencv_extractor/extract_frames.py --video "videos/YOUR_VIDEO.mp4"
-```
-
-#### Step 2: Analyze Landmarks (WITHOUT Annotated Images - Faster & Saves Space)
-```powershell
-python mediapipe_analyzer/analyze_landmarks.py --input "output_frames/YOUR_VIDEO"
-```
-
-**Note**: By default, annotated images are NOT saved. This is faster and saves disk space.
-
-#### Step 2 (Alternative): Analyze Landmarks WITH Annotated Images
-```powershell
-python mediapipe_analyzer/analyze_landmarks.py --input "output_frames/YOUR_VIDEO" --save-annotated
-```
-
-Use `--save-annotated` flag only if you need visual verification images.
-
-#### Step 3: Extract Complete Features
-```powershell
-python -c "from risk_engine.complete_feature_extractor import extract_complete_features; extract_complete_features(r'analysis_results\YOUR_VIDEO\landmarks_33_data.csv', r'analysis_results\YOUR_VIDEO\frame_features.csv')"
-```
-
-#### Step 4: Analyze Movement
-```powershell
-python -c "from risk_engine.movement_analyzer import analyze_movement; analyze_movement(r'analysis_results\YOUR_VIDEO\frame_features.csv', r'analysis_results\YOUR_VIDEO\movement_summary.csv')"
-```
-
-#### Step 5: Generate Risk Report
-```powershell
-python -c "from risk_engine.report_generator import generate_report, save_report; import pandas as pd; df = pd.read_csv(r'analysis_results\YOUR_VIDEO\movement_summary.csv'); report = generate_report(df.iloc[0]); save_report(report, r'analysis_results\YOUR_VIDEO\risk_report.json'); print(report)"
+risk-analyse/
+│
+├── 🌐 api/                             # REST API Layer (FastAPI)
+│   ├── main.py                         # Application entry point & CORS setup
+│   ├── job_store.py                    # Thread-safe in-memory job tracker
+│   ├── models/
+│   │   └── schemas.py                  # Pydantic request/response schemas
+│   └── routes/
+│       ├── analyze.py                  # POST /analyze (Video Upload)
+│       ├── status.py                   # GET /status/{job_id} (Job Polling)
+│       └── report.py                   # GET /report/{job_id} (Fetch Result)
+│
+├── 🧠 src/                             # Core Biomechanical & Vision Modules
+│   ├── video_processing/
+│   │   └── frame_extractor.py          # OpenCV frame extraction
+│   ├── pose_analysis/
+│   │   ├── landmark_analyzer.py        # MediaPipe 33-landmark detector
+│   │   ├── pose_landmarks_map.py       # Body keypoint mapping definitions
+│   │   └── pose_landmarker_full.task   # MediaPipe AI task model binary
+│   ├── feature_extraction/
+│   │   ├── feature_extractor.py        # Frame-wise feature extraction orchestrator
+│   │   ├── joint_angles.py             # 8-Joint angle trigonometry
+│   │   ├── trunk.py                    # Trunk lean angle calculator
+│   │   ├── knee_valgus.py              # Inward knee collapse indicator
+│   │   └── symmetry.py                 # Bilateral symmetry balance
+│   ├── risk_assessment/
+│   │   ├── movement_analyzer.py        # Movement summary & ROM calculator
+│   │   ├── movement_metrics.py         # Stability, fatigue, and landing metrics
+│   │   ├── risk_score.py               # Body zone risk scoring & weighted overall risk
+│   │   ├── recommendations.py          # Dynamic recommendation & alert generator
+│   │   ├── report_generator.py         # Report JSON formatter
+│   │   └── thresholds.py               # Biomechanical risk thresholds
+│   └── utils/
+│       ├── geometry.py                 # Vector math, angles, COM, distance
+│       ├── landmark_loader.py          # CSV landmark dataset loader
+│       └── constants.py                # MediaPipe landmark indices
+│
+├── 🚀 scripts/
+│   └── run_full_analysis.py            # Complete CLI pipeline runner with auto-cleanup
+│
+├── 🎬 data/                            # Persistent Data Layer
+│   ├── input_videos/                   # Uploaded source videos
+│   ├── output/                         # Analysis results (contains risk_report.json)
+│   └── temp/                           # Temporary frame cache (auto-purged)
+│
+├── MIGRATION_GUIDE.md                  # System architecture migration history
+├── STRUCTURE.md                        # Developer structural reference
+├── README.md                           # Documentation
+└── requirements.txt                    # Project Python dependencies
 ```
 
 ---
 
-## 📁 Output Files
+## ⚡ Quick Start
 
-After processing a video, you'll get:
-
-### Essential Files (Always Generated)
-- `landmarks_33_data.csv` - Raw 33 body landmark coordinates per frame
-- `landmarks_33_data.json` - Same data in JSON format
-- `frame_features.csv` - 15 biomechanical features per frame
-- `movement_summary.csv` - Aggregated movement metrics
-- `risk_report.json` - Final risk assessment with recommendations
-
-### Optional Files (Only if --save-annotated flag is used)
-- `annotated_frames/` - Images with landmarks drawn (for visual verification)
-
----
-
-## 🎯 Annotated Images - When Do You Need Them?
-
-### ❌ **You DON'T Need Them For:**
-- Risk analysis calculations
-- Feature extraction
-- Movement analysis
-- Report generation
-- Production use
-
-### ✅ **You NEED Them Only For:**
-- Visual debugging (checking if pose detection worked)
-- Quality control (verifying landmark accuracy)
-- Presentations (showing clients/researchers the detected poses)
-- Research publications (demonstrating the system)
-
----
-
-## ⚙️ Command Options
-
-### Extract Frames
-```powershell
-python opencv_extractor/extract_frames.py --video "videos/video.mp4" --interval 5 --format png
-```
-- `--video` or `-v`: Path to input video file
-- `--interval` or `-i`: Frame interval (1=all frames, 5=every 5th frame)
-- `--format` or `-f`: Output format (jpg or png)
-
-### Analyze Landmarks
-```powershell
-python mediapipe_analyzer/analyze_landmarks.py --input "output_frames/video" --confidence 0.7 --save-annotated
-```
-- `--input` or `-i`: Directory containing extracted frames
-- `--confidence` or `-c`: Min detection confidence (0.0 to 1.0, default=0.5)
-- `--save-annotated`: Save annotated images (default=False, omit to skip)
-
----
-
-## 📊 Risk Assessment Categories
-
-### Overall Risk Score (0-100)
-- **0-25**: Low Risk ✅
-- **25-50**: Moderate Risk ⚠️
-- **50-75**: High Risk 🔴
-- **75-100**: Very High Risk 🚨
-
-### Body Part Risks
-- **Knee Risk**: Based on knee valgus, ROM, and landing quality
-- **Hip Risk**: Based on symmetry and hip ROM
-- **Spine Risk**: Based on trunk lean and stability
-- **Fatigue Risk**: Based on performance degradation over time
-
----
-
-## 🔧 System Requirements
-
-- Python 3.10+
-- Windows OS (current setup)
-- Webcam or video files
-- Minimum 4GB RAM
-- MediaPipe-compatible CPU
-
----
-
-## 📦 Dependencies
-
-All dependencies are pre-installed in `.venv`:
-- opencv-python >= 4.8.0
-- mediapipe >= 0.10.0
-- numpy >= 1.24.0
-- pandas >= 2.0.0
-- Pillow >= 10.0.0
-- openpyxl >= 3.1.0
-
----
-
-## 💡 Performance Tips
-
-### Faster Processing (Recommended for Production)
-```powershell
-# Skip annotated images (default behavior)
-python mediapipe_analyzer/analyze_landmarks.py --input "output_frames/video"
-```
-**Benefits:**
-- ✅ 2-3x faster processing
-- ✅ Saves 100-500 MB disk space per video
-- ✅ No quality loss in analysis
-
-### Extract Fewer Frames
-```powershell
-# Extract every 5th frame instead of all frames
-python opencv_extractor/extract_frames.py --video "videos/video.mp4" --interval 5
-```
-**Benefits:**
-- ✅ 5x faster processing
-- ✅ 5x less disk space
-- ⚠️ Lower temporal resolution
-
----
-
-## 📝 Example Usage
+### 1. Environment Setup
 
 ```powershell
-# Activate environment
+# Activate Virtual Environment
 .\.venv\Scripts\Activate.ps1
 
-# Process a workout video (FAST - no annotated images)
-python opencv_extractor/extract_frames.py --video "videos/workout.mp4"
-python mediapipe_analyzer/analyze_landmarks.py --input "output_frames/workout"
-
-# Extract features and analyze
-python test_feature_extractor.py    # (modify paths in file)
-python test_movement_analyzer.py    # (modify paths in file)
-python test_risk_engine.py          # (modify paths in file)
+# Install Dependencies
+pip install -r requirements.txt
 ```
 
----
+### 2. Running the REST API
 
-## 🎓 Use Cases
+Launch the Uvicorn dev server:
 
-- **Ergonomic Assessments**: Workplace movement analysis
-- **Sports Performance**: Athletic technique evaluation
-- **Physical Therapy**: Rehabilitation progress tracking
-- **Injury Prevention**: Risk identification and monitoring
-- **Research**: Biomechanical studies
-
----
-
-## 🆘 Troubleshooting
-
-### "No module named 'cv2'" Error
 ```powershell
-# Activate virtual environment first
-.\.venv\Scripts\Activate.ps1
+uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### "No video specified" Error
+- 📌 **API Root**: `http://localhost:8000/`
+- 📖 **Interactive Swagger Docs**: `http://localhost:8000/docs`
+
+---
+
+## 📡 REST API Workflow
+
+### Step 1: Submit Video for Analysis
+
+**`POST /analyze`** (Multipart Form Upload)
+
+Upload a `.mp4`, `.avi`, `.mov`, `.mkv`, or `.wmv` video file.
+
+```http
+POST /analyze HTTP/1.1
+Content-Type: multipart/form-data
+```
+
+**Response (`200 OK`):**
+```json
+{
+  "job_id": "c9a4b812-7f41-4b10-86b1-3e4bfa02931a",
+  "status": "queued",
+  "message": "Analysis queued. Poll GET /status/c9a4b812-7f41-4b10-86b1-3e4bfa02931a to track progress."
+}
+```
+
+---
+
+### Step 2: Poll Execution Status
+
+**`GET /status/{job_id}`**
+
+```http
+GET /status/c9a4b812-7f41-4b10-86b1-3e4bfa02931a HTTP/1.1
+```
+
+**Response (`200 OK`):**
+```json
+{
+  "job_id": "c9a4b812-7f41-4b10-86b1-3e4bfa02931a",
+  "status": "processing",
+  "video_name": "c9a4b812-7f41-4b10-86b1-3e4bfa02931a",
+  "error": null
+}
+```
+*Possible Status Values:* `queued` | `processing` | `done` | `failed`
+
+---
+
+### Step 3: Retrieve Final Risk Report
+
+**`GET /report/{job_id}`**
+
+Fetch the generated assessment report once status reaches `done`.
+
+```http
+GET /report/c9a4b812-7f41-4b10-86b1-3e4bfa02931a HTTP/1.1
+```
+
+**Response (`200 OK`):**
+```json
+{
+  "job_id": "c9a4b812-7f41-4b10-86b1-3e4bfa02931a",
+  "video_name": "c9a4b812-7f41-4b10-86b1-3e4bfa02931a",
+  "overall_risk": 47.5,
+  "risk_level": "MODERATE",
+  "body_part_risks": {
+    "knee": 60.0,
+    "hip": 30.0,
+    "spine": 50.0,
+    "fatigue": 0.0
+  },
+  "movement_scores": {
+    "landing_quality": 63.4,
+    "stability_score": 91.2,
+    "symmetry_score": 96.1,
+    "fatigue_score": 0.0
+  },
+  "alerts": [
+    "High knee valgus detected.",
+    "Poor landing mechanics."
+  ],
+  "recommendations": [
+    "Strengthen hip abductors and improve knee alignment.",
+    "Practice soft two-leg landing drills."
+  ]
+}
+```
+
+---
+
+## 💻 Command Line Interface (CLI)
+
+Run the full pipeline directly on any local video file:
+
 ```powershell
-# Make sure video file exists in videos/ folder
-dir videos\
+python scripts/run_full_analysis.py --video "data/input_videos/sample_workout.mp4"
 ```
 
-### Slow Processing
-```powershell
-# Skip annotated images (default)
-python mediapipe_analyzer/analyze_landmarks.py --input "output_frames/video"
-
-# OR extract fewer frames
-python opencv_extractor/extract_frames.py --video "videos/video.mp4" --interval 5
-```
+### Optional Arguments:
+- `--video`, `-v`: Path to input video file (*Required*)
+- `--output`, `-o`: Custom output folder name (*Optional*)
+- `--save-annotated`: Save landmark-annotated images for visual debugging (*Optional*)
 
 ---
 
-## 📂 Project Structure
+## 📊 Biomechanical Risk Evaluation Model
 
-```
-risk analyse/
-├── videos/                          # Input videos
-├── output_frames/                   # Extracted frames (temporary)
-├── analysis_results/                # Final outputs
-│   └── VIDEO_NAME/
-│       ├── landmarks_33_data.csv   # Raw landmarks
-│       ├── frame_features.csv      # Biomechanical features
-│       ├── movement_summary.csv    # Movement metrics
-│       ├── risk_report.json        # Risk assessment
-│       └── annotated_frames/       # (Optional) Visual verification
-├── opencv_extractor/                # Video → Frames
-├── mediapipe_analyzer/              # Frames → Landmarks
-├── risk_engine/                     # Analysis & Risk Assessment
-├── test_*.py                        # Test scripts
-└── .venv/                          # Python environment
-```
+### Overall Risk Score Formula
+
+The system computes a weighted composite risk index ($0 - 100$):
+
+$$\text{Overall Risk} = (0.40 \times \text{Knee}) + (0.25 \times \text{Spine}) + (0.20 \times \text{Hip}) + (0.15 \times \text{Fatigue})$$
+
+### Risk Classifications
+
+| Score Range | Risk Level | Status | Action Required |
+|:---:|:---:|:---:|:---|
+| **0 – 24.9** | **LOW** | 🟢 | Safe posture mechanics; minimal intervention needed |
+| **25 – 49.9** | **MODERATE** | 🟡 | Minor postural deviations; preventative care advised |
+| **50 – 74.9** | **HIGH** | 🟠 | High risk of mechanical strain; posture correction required |
+| **75 – 100** | **VERY HIGH** | 🔴 | Severe injury hazard; immediate ergonomic intervention mandatory |
 
 ---
 
-## ✅ Best Practices
+## 📄 License & Attribution
 
-1. **For Production**: Always run WITHOUT --save-annotated flag
-2. **For Debugging**: Use --save-annotated only when troubleshooting
-3. **For Research**: Save annotated images for documentation
-4. **For Speed**: Extract every 3-5 frames instead of all frames
-5. **For Accuracy**: Use --confidence 0.7 or higher
-
----
-
-## 📄 License
-
-This project uses:
-- MediaPipe (Apache 2.0)
-- OpenCV (Apache 2.0)
-- Pandas, NumPy (BSD)
-
----
-
-## 🎉 Ready to Use!
-
-The system is fully configured and ready for production use. All changes are permanent and work in any Python IDE or environment.
+- **MediaPipe**: Apache License 2.0 (Google LLC)
+- **OpenCV**: Apache License 2.0
+- **FastAPI**: MIT License
