@@ -24,6 +24,8 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi.staticfiles import StaticFiles
+
 from api.routes import analyze, report, status
 
 app = FastAPI(
@@ -52,6 +54,11 @@ app.include_router(analyze.router, tags=["1. Analysis"])
 app.include_router(status.router,  tags=["2. Status"])
 app.include_router(report.router,  tags=["3. Report"])
 
+# ── Serve Frontend Dashboard ───────────────────────────────────────────────
+frontend_path = PROJECT_ROOT / "frontend"
+if frontend_path.exists():
+    app.mount("/dashboard", StaticFiles(directory=str(frontend_path), html=True), name="dashboard")
+
 
 # ── Health check ───────────────────────────────────────────────────────────
 @app.get("/", tags=["Health"], summary="Health check")
@@ -60,6 +67,7 @@ async def root():
         "service": "Ergonomic Risk Analysis API",
         "status": "running",
         "docs": "/docs",
+        "dashboard": "/dashboard",
         "endpoints": {
             "upload_video":  "POST /analyze",
             "check_status":  "GET  /status/{job_id}",

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>AERIS | Athlete Performance Dashboard</title>
+    <!-- Tailwind CSS with Forms & Container Queries -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css"/>
+
+    <!-- Tailwind Config with Design System Tokens -->
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                  "on-error-container": "#93000a",
+                  "surface-bright": "#f9f9ff",
+                  "tertiary-container": "#008644",
+                  "on-primary-fixed": "#002109",
+                  "on-secondary": "#ffffff",
+                  "on-tertiary-fixed-variant": "#005227",
+                  "on-primary-container": "#f7fff2",
+                  "secondary-fixed-dim": "#4ae176",
+                  "error": "#ba1a1a",
+                  "tertiary-fixed": "#6dfe9c",
+                  "on-secondary-container": "#007432",
+                  "on-secondary-fixed": "#002109",
+                  "primary": "#006b2c",
+                  "error-container": "#ffdad6",
+                  "on-surface-variant": "#3e4a3d",
+                  "on-primary": "#ffffff",
+                  "surface-variant": "#dce2f7",
+                  "on-tertiary": "#ffffff",
+                  "primary-container": "#00873a",
+                  "surface": "#f9f9ff",
+                  "surface-container": "#e9edff",
+                  "primary-fixed-dim": "#62df7d",
+                  "on-tertiary-container": "#f6fff3",
+                  "on-primary-fixed-variant": "#005320",
+                  "secondary-fixed": "#6bff8f",
+                  "on-background": "#141b2b",
+                  "outline": "#6e7b6c",
+                  "tertiary-fixed-dim": "#4de082",
+                  "surface-container-highest": "#dce2f7",
+                  "surface-container-lowest": "#ffffff",
+                  "surface-container-low": "#f1f3ff",
+                  "primary-fixed": "#7ffc97",
+                  "inverse-on-surface": "#edf0ff",
+                  "secondary-container": "#6bff8f",
+                  "on-tertiary-fixed": "#00210c",
+                  "on-secondary-fixed-variant": "#005321",
+                  "secondary": "#006e2f",
+                  "surface-tint": "#006e2d",
+                  "surface-dim": "#d3daef",
+                  "on-surface": "#141b2b",
+                  "inverse-surface": "#293040",
+                  "background": "#f9f9ff",
+                  "surface-container-high": "#e1e8fd",
+                  "tertiary": "#006a34",
+                  "inverse-primary": "#62df7d",
+                  "outline-variant": "#bdcaba",
+                  "on-error": "#ffffff",
+                  "accent-soft": "#DCFCE7",
+                  "primary-green": "#16A34A"
+              },
+              "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+              },
+              "spacing": {
+                  "unit": "8px",
+                  "container-max": "1440px",
+                  "stack-sm": "12px",
+                  "stack-lg": "40px",
+                  "gutter": "24px",
+                  "margin-mobile": "20px",
+                  "stack-md": "24px",
+                  "margin-desktop": "48px"
+              },
+              "fontFamily": {
+                  "display-hero-mobile": ["Plus Jakarta Sans"],
+                  "body-sm": ["Inter"],
+                  "body-md": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "display-hero": ["Plus Jakarta Sans"],
+                  "headline-lg": ["Plus Jakarta Sans"],
+                  "label-caps": ["Inter"],
+                  "headline-md": ["Plus Jakarta Sans"]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md min-h-screen selection:bg-accent-soft selection:text-primary-green">
+
+<!-- Top Navigation Bar -->
+<nav class="docked full-width top-0 shadow-sm bg-surface-container-lowest dark:bg-inverse-surface shadow-[0_10px_30px_rgba(0,0,0,0.04)] hidden md:block border-b border-surface-container-low">
+    <div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
+        <div class="text-headline-md font-headline-md font-extrabold tracking-tighter text-primary flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary-green text-3xl">sports_score</span>
+            AERIS
+        </div>
+        <div class="flex gap-stack-md font-body-md text-body-md">
+            <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-colors duration-200" href="#">Dashboard</a>
+            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Reports</a>
+            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">History</a>
+            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="#">Settings</a>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                FastAPI Connected
+            </span>
+            <button class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <span class="text-primary font-body-md font-medium">Athlete Profile</span>
+                <img alt="Athlete Profile Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-surface-container-low shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtv09NYosvrJzaXK9Y7vkNm3kjFxn42xJzB565_VF6lvgVKJHKFmYLdxp-AuH7AwmLLMZPFouYasppm359lZmeRU4DjqmoK3TGA8ziCkL8VbCSdc4LMicxe0fKDT5wgxXugwS0fqaov2X8BH5u9HURMVKOJPpN6i-p8Y6L62nLLw7ku-HEqU_Kj-w2pSsbeB7DZmnw7ueAzcq1blrY9p4SYnUiR4g6IHlTLfteM2awdXmIpTT_9twt6A"/>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content: Split Screen Layout -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg md:py-12">
+    <div class="flex flex-col lg:flex-row gap-gutter md:gap-12 items-start">
+        
+        <!-- Left Section: Upload & Actions (approx 45% width) -->
+        <section class="w-full lg:w-[45%] flex flex-col gap-stack-md shrink-0">
+            <!-- Hero Header -->
+            <div class="flex flex-col gap-stack-sm mb-2">
+                <h1 class="font-display-hero-mobile text-display-hero-mobile md:font-display-hero md:text-[42px] text-primary-green leading-tight">
+                    AI-Powered Athletic Movement Analysis
+                </h1>
+                <p class="font-body-lg text-body-md text-on-surface-variant leading-relaxed opacity-90 max-w-xl">
+                    Upload training video to run MediaPipe 33-landmark pose estimation, frame-wise biomechanical extraction, and our AI ergonomic risk engine.
+                </p>
+            </div>
+
+            <!-- Status Banner (Hidden by default) -->
+            <div id="statusBanner" class="hidden glass-card rounded-xl p-4 bg-emerald-50 border border-emerald-200 flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary-green animate-spin">sync</span>
+                <span id="statusText" class="text-body-sm font-medium text-emerald-900">Processing video...</span>
+            </div>
+
+            <!-- Hidden File Input -->
+            <input type="file" id="videoFileInput" accept=".mp4,.mov,.avi,.mkv,.wmv" class="hidden"/>
+
+            <!-- Drag & Drop Upload Card -->
+            <div id="dropzone" class="glass-card rounded-xl p-8 border-dashed border-2 border-outline-variant bg-surface hover:bg-surface-container-low transition-all group cursor-pointer flex flex-col items-center justify-center text-center gap-4 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <span class="material-symbols-outlined text-4xl text-primary opacity-70 group-hover:opacity-100 transition-opacity" data-icon="cloud_upload">cloud_upload</span>
+                
+                <div id="dropzonePrompt">
+                    <h3 class="font-headline-md text-headline-md text-on-surface mb-1">Drag &amp; Drop Your Video</h3>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">or <span class="text-primary-green font-medium underline underline-offset-2">Browse Files</span></p>
+                    <p class="font-label-caps text-label-caps text-outline uppercase tracking-widest mt-3">MP4, MOV, AVI, MKV (Max 500MB)</p>
+                </div>
+
+                <div id="fileInfo" class="hidden flex flex-col items-center gap-1">
+                    <span class="material-symbols-outlined text-3xl text-primary-green">movie</span>
+                    <p id="fileNameDisplay" class="font-headline-md text-body-md font-bold text-on-surface text-emerald-800">video.mp4</p>
+                    <p id="fileSizeDisplay" class="font-body-sm text-xs text-outline">0 MB</p>
+                    <span class="text-xs text-primary-green font-medium underline mt-1">Click to change file</span>
+                </div>
+            </div>
+
+            <!-- Primary Action Button -->
+            <button id="analyzeBtn" class="w-full bg-primary-green text-on-primary py-4 px-8 rounded-full font-headline-md text-headline-md hover:bg-tertiary-container hover:shadow-[0_10px_20px_rgba(22,163,74,0.3)] transition-all duration-300 flex items-center justify-center gap-3 hover:-translate-y-0.5">
+                <span id="analyzeBtnText">Analyze Performance</span>
+                <span id="analyzeBtnIcon" class="material-symbols-outlined" data-icon="sync">sync</span>
+            </button>
+
+            <!-- Features Mini Bento -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
+                <div class="bg-surface rounded-lg p-4 border border-surface-container-low shadow-sm flex flex-col items-start gap-2 hover-lift">
+                    <span class="material-symbols-outlined text-secondary bg-accent-soft p-2 rounded-md mb-1" data-icon="accessibility_new">accessibility_new</span>
+                    <h4 class="font-body-sm text-xs font-bold text-on-surface leading-tight">33-Landmark AI Tracking</h4>
+                </div>
+                <div class="bg-surface rounded-lg p-4 border border-surface-container-low shadow-sm flex flex-col items-start gap-2 hover-lift">
+                    <span class="material-symbols-outlined text-secondary bg-accent-soft p-2 rounded-md mb-1" data-icon="biotech">biotech</span>
+                    <h4 class="font-body-sm text-xs font-bold text-on-surface leading-tight">Biomechanical Analysis</h4>
+                </div>
+                <div class="bg-surface rounded-lg p-4 border border-surface-container-low shadow-sm flex flex-col items-start gap-2 hover-lift">
+                    <span class="material-symbols-outlined text-secondary bg-accent-soft p-2 rounded-md mb-1" data-icon="health_and_safety">health_and_safety</span>
+                    <h4 class="font-body-sm text-xs font-bold text-on-surface leading-tight">Weighted Risk Assessment</h4>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Section: Analytics Composition (approx 55% width) -->
+        <section class="w-full lg:w-[55%] flex flex-col gap-gutter">
+            
+            <!-- Bento Grid Layout for Analytics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                
+                <!-- Overall Performance Score -->
+                <div class="glass-card rounded-xl p-8 hover-lift flex flex-col items-center justify-center relative min-h-[300px]">
+                    <h3 class="font-body-lg text-body-lg font-medium text-on-surface absolute top-6 left-6">Overall Readiness</h3>
+                    <div class="relative w-48 h-48 mt-8 flex items-center justify-center">
+                        <!-- SVG Circle Gauge -->
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" fill="none" r="45" stroke="var(--surface-container-high, #e1e8fd)" stroke-linecap="round" stroke-width="8"></circle>
+                            <circle id="gaugeCircle" class="gauge-circle transition-all duration-1000" cx="50" cy="50" fill="none" r="45" stroke="#CBD5E1" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" stroke-width="8"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="readinessValue" class="font-headline-lg text-headline-lg text-on-surface">--<span class="text-body-md text-outline">%</span></span>
+                            <span id="readinessBadge" class="font-label-caps text-label-caps text-slate-500 bg-slate-100 px-3 py-1 rounded-full mt-2">AWAITING VIDEO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pose Preview Card -->
+                <div class="glass-card rounded-xl p-6 hover-lift relative overflow-hidden min-h-[300px] flex flex-col">
+                    <h3 class="font-body-lg text-body-lg font-medium text-on-surface mb-4 z-10">Live Kinematics</h3>
+                    <div class="flex-grow rounded-lg overflow-hidden relative bg-surface-variant flex items-center justify-center">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-80 mix-blend-multiply" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBVm8HK3RHYbjegjNYnr7yG-H7mgE4UICTUGEiq5Rwwar-qxV137yjkA9sBDti1gLLx9i2FN516VSwfH_2Ro7FDBvX6JSE6CClh8lbQ8z6vvafQu6t3dJwxcLbrLQR344J1wnGhhZco3aaJIyP6_raN8TAJGUp1tFntk5gYR7aMhC1J-afJpHkwfSmOkk9ETqalhaIULdrrMYinamASUjfv0sSKKhimKQh9v35Er7tbt8IYlw-Sg3WOZA')"></div>
+                        <div class="absolute bottom-4 left-4 flex flex-wrap gap-2">
+                            <span id="kinematicMetric1" class="bg-white/90 backdrop-blur-sm text-xs font-bold text-on-surface px-2 py-1 rounded shadow-sm">LANDING: --</span>
+                            <span id="kinematicMetric2" class="bg-white/90 backdrop-blur-sm text-xs font-bold text-on-surface px-2 py-1 rounded shadow-sm">SYMMETRY: --%</span>
+                            <span id="kinematicMetric3" class="bg-white/90 backdrop-blur-sm text-xs font-bold text-on-surface px-2 py-1 rounded shadow-sm">STABILITY: --</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body Risk Breakdown (Spans 2 columns) -->
+                <div class="glass-card rounded-xl p-8 hover-lift md:col-span-2">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-body-lg text-body-lg font-medium text-on-surface">Regional Risk Breakdown</h3>
+                        <span class="text-xs font-medium text-outline uppercase tracking-wider">Weighted Engine</span>
+                    </div>
+                    <div class="flex flex-col gap-4">
+                        <!-- Knee Progress Bar -->
+                        <div class="flex items-center gap-4">
+                            <span class="w-16 font-body-sm text-body-sm text-on-surface-variant text-right">Knee</span>
+                            <div class="flex-grow h-2 bg-surface-container-high rounded-full overflow-hidden">
+                                <div id="kneeBar" class="h-full bg-slate-300 transition-all duration-700 w-[0%] rounded-full"></div>
+                            </div>
+                            <span id="kneeVal" class="w-12 font-body-sm text-body-sm text-on-surface font-medium">0%</span>
+                        </div>
+                        <!-- Hip Progress Bar -->
+                        <div class="flex items-center gap-4">
+                            <span class="w-16 font-body-sm text-body-sm text-on-surface-variant text-right">Hip</span>
+                            <div class="flex-grow h-2 bg-surface-container-high rounded-full overflow-hidden">
+                                <div id="hipBar" class="h-full bg-slate-300 transition-all duration-700 w-[0%] rounded-full"></div>
+                            </div>
+                            <span id="hipVal" class="w-12 font-body-sm text-body-sm text-on-surface font-medium">0%</span>
+                        </div>
+                        <!-- Spine Progress Bar -->
+                        <div class="flex items-center gap-4">
+                            <span class="w-16 font-body-sm text-body-sm text-on-surface-variant text-right">Spine</span>
+                            <div class="flex-grow h-2 bg-surface-container-high rounded-full overflow-hidden">
+                                <div id="spineBar" class="h-full bg-slate-300 transition-all duration-700 w-[0%] rounded-full"></div>
+                            </div>
+                            <span id="spineVal" class="w-12 font-body-sm text-body-sm text-on-surface font-medium">0%</span>
+                        </div>
+                        <!-- Fatigue Progress Bar -->
+                        <div class="flex items-center gap-4">
+                            <span class="w-16 font-body-sm text-body-sm text-on-surface-variant text-right">Fatigue</span>
+                            <div class="flex-grow h-2 bg-surface-container-high rounded-full overflow-hidden">
+                                <div id="fatigueBar" class="h-full bg-slate-300 transition-all duration-700 w-[0%] rounded-full"></div>
+                            </div>
+                            <span id="fatigueVal" class="w-12 font-body-sm text-body-sm text-on-surface font-medium">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Analysis & Alerts (Spans 2 columns) -->
+                <div class="glass-card rounded-xl p-6 hover-lift md:col-span-2">
+                    <h3 class="font-body-md text-body-md font-medium text-on-surface mb-3">Recent Analysis &amp; Action Plan</h3>
+                    
+                    <div id="recentSessionCard" class="hidden bg-surface rounded-lg p-4 border border-surface-container-low flex justify-between items-center group hover:bg-surface-container-low transition-colors mb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-accent-soft flex items-center justify-center text-primary-green">
+                                <span class="material-symbols-outlined" data-icon="videocam">videocam</span>
+                            </div>
+                            <div>
+                                <p id="recentSessionName" class="font-body-md text-body-md font-medium text-on-surface">No Video Analyzed</p>
+                                <p id="recentSessionTime" class="font-body-sm text-body-sm text-outline">Awaiting upload</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="recentSessionBadge" class="font-label-caps text-label-caps bg-slate-100 text-slate-600 px-3 py-1 rounded-full uppercase">NO DATA</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Alerts & Recommendations List Container -->
+                    <div id="recommendationsContainer">
+                        <p class="text-body-sm text-outline italic">Upload a video to run MediaPipe pose analysis and generate your real-time risk assessment.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<!-- Main Controller Script -->
+<script src="app.js"></script>
+
+</body>
+</html>
