@@ -75,3 +75,46 @@ async def get_report(job_id: str):
         alerts=data["alerts"],
         recommendations=data["recommendations"],
     )
+
+
+@router.get(
+    "/reports",
+    response_model=list[RiskReport],
+    summary="List all historical risk assessment reports",
+)
+async def list_all_reports():
+    """
+    Scans the `data/output/` directory and returns all completed reports.
+    """
+    output_dir = Path("data/output")
+    reports = []
+
+    if not output_dir.exists():
+        return reports
+
+    for folder in output_dir.iterdir():
+        if folder.is_dir():
+            report_file = folder / "risk_report.json"
+            if report_file.exists():
+                try:
+                    with open(report_file, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    
+                    job_id = folder.name
+                    reports.append(
+                        RiskReport(
+                            job_id=job_id,
+                            video_name=data.get("video_name", folder.name),
+                            overall_risk=data["overall_risk"],
+                            risk_level=data["risk_level"],
+                            body_part_risks=BodyPartRisks(**data["body_part_risks"]),
+                            movement_scores=MovementScores(**data["movement_scores"]),
+                            alerts=data.get("alerts", []),
+                            recommendations=data.get("recommendations", []),
+                        )
+                    )
+                except Exception as exc:
+                    print(f"Error loading report from {report_file}: {exc}")
+                    continue
+
+    return reports
