@@ -26,7 +26,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi.staticfiles import StaticFiles
 
-from api.routes import analyze, report, status
+from api.routes import analyze, auth, report, status
 
 app = FastAPI(
     title="Ergonomic Risk Analysis API",
@@ -50,6 +50,7 @@ app.add_middleware(
 )
 
 # ── Register routers ───────────────────────────────────────────────────────
+app.include_router(auth.router,    tags=["0. Authentication"])
 app.include_router(analyze.router, tags=["1. Analysis"])
 app.include_router(status.router,  tags=["2. Status"])
 app.include_router(report.router,  tags=["3. Report"])

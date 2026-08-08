@@ -14,9 +14,28 @@ let pollInterval = null;
 // DOM Elements
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[AERIS] Dashboard initialized. API Base URL:', API_BASE_URL);
+    initUserProfile();
     initDropzone();
     initAnalyzeButton();
 });
+
+function initUserProfile() {
+    const userStr = localStorage.getItem('aeris_user');
+    const profileNameEl = document.getElementById('userProfileName');
+    const profileBtn = document.getElementById('userProfileBtn');
+    if (userStr && profileNameEl) {
+        try {
+            const user = JSON.parse(userStr);
+            if (user.full_name) {
+                profileNameEl.textContent = user.full_name;
+            }
+        } catch (e) {}
+    } else if (profileBtn) {
+        profileBtn.addEventListener('click', () => {
+            window.location.href = 'login.html';
+        });
+    }
+}
 
 /**
  * Initialize Drag & Drop Zone and File Input
