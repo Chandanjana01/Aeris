@@ -119,33 +119,15 @@
                 AERIS
             </div>
             <div class="flex gap-stack-md font-body-md text-body-md">
-                <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-colors duration-200"
-                    href="index.html">Dashboard</a>
-                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200"
-                    href="reports.html">Reports</a>
-                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200"
-                    href="#">History</a>
-                <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200"
-                    href="#">Settings</a>
-            </div>
+            <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-colors duration-200" href="index.html">Dashboard</a>
+            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="reports.html">Reports</a>
+            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="history.html">History</a>
+            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="settings.html">Settings</a>
+        </div>
             <div class="flex items-center gap-3">
-                <span
-                    class="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    FastAPI Connected
-                </span>
-                <div class="flex items-center gap-2 bg-surface-container-low p-1.5 rounded-full border border-outline-variant/40 shadow-xs">
-                    <div class="flex items-center gap-2 pl-2 pr-1">
-                        <span id="userProfileName" class="text-primary font-body-md font-medium text-xs">Athlete Profile</span>
-                        <img alt="Athlete Profile Avatar"
-                            class="w-7 h-7 rounded-full object-cover border border-surface-container-low shadow-sm"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtv09NYosvrJzaXK9Y7vkNm3kjFxn42xJzB565_VF6lvgVKJHKFmYLdxp-AuH7AwmLLMZPFouYasppm359lZmeRU4DjqmoK3TGA8ziCkL8VbCSdc4LMicxe0fKDT5wgxXugwS0fqaov2X8BH5u9HURMVKOJPpN6i-p8Y6L62nLLw7ku-HEqU_Kj-w2pSsbeB7DZmnw7ueAzcq1blrY9p4SYnUiR4g6IHlTLfteM2awdXmIpTT_9twt6A" />
-                    </div>
-                    <button id="logoutBtn" title="Logout of AERIS" class="flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer">
-                        <span class="material-symbols-outlined text-sm">logout</span>
-                        <span>Logout</span>
-                    </button>
-                </div>
+                <button id="userProfileBtn" title="View Profile" class="flex items-center justify-center p-0.5 rounded-full border-2 border-primary-green/30 hover:border-primary-green transition-all cursor-pointer shadow-xs hover:scale-105">
+                    <img id="userNavAvatar" alt="Athlete Profile Avatar" class="w-8 h-8 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtv09NYosvrJzaXK9Y7vkNm3kjFxn42xJzB565_VF6lvgVKJHKFmYLdxp-AuH7AwmLLMZPFouYasppm359lZmeRU4DjqmoK3TGA8ziCkL8VbCSdc4LMicxe0fKDT5wgxXugwS0fqaov2X8BH5u9HURMVKOJPpN6i-p8Y6L62nLLw7ku-HEqU_Kj-w2pSsbeB7DZmnw7ueAzcq1blrY9p4SYnUiR4g6IHlTLfteM2awdXmIpTT_9twt6A" />
+                </button>
             </div>
         </div>
     </nav>

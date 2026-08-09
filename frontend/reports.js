@@ -17,24 +17,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initUserProfile() {
     const userStr = localStorage.getItem('aeris_user');
-    const profileNameEl = document.getElementById('userProfileName');
-    const logoutBtn = document.getElementById('logoutBtn');
-    
-    if (userStr && profileNameEl) {
-        try {
-            const user = JSON.parse(userStr);
-            if (user.full_name) {
-                profileNameEl.textContent = user.full_name;
-            }
-        } catch (e) {}
+    const customAvatar = localStorage.getItem('aeris_avatar');
+    const navAvatarEl = document.getElementById('userNavAvatar');
+    const profileBtn = document.getElementById('userProfileBtn');
+
+    if (navAvatarEl) {
+        if (customAvatar) {
+            navAvatarEl.src = customAvatar;
+        } else if (userStr) {
+            try {
+                const user = JSON.parse(userStr);
+                if (user.avatar_url) navAvatarEl.src = user.avatar_url;
+            } catch (e) {}
+        }
     }
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            console.log('[AERIS] Logging out user...');
-            localStorage.removeItem('aeris_token');
-            localStorage.removeItem('aeris_user');
-            window.location.href = 'login.html';
+    if (profileBtn) {
+        profileBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'profile.html';
         });
     }
 }
