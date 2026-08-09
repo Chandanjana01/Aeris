@@ -14,3 +14,6 @@ python-multipart>=0.0.9
 groq>=0.4.0
 python-dotenv>=1.0.0
 
+# Database
+pymongo>=4.17.0
+dnspython>=2.6.1

@@ -98,8 +98,11 @@ async function loadReports() {
             throw new Error(`Server returned status ${response.status}`);
         }
 
-        allReports = await response.json();
-        console.log('[AERIS Reports] Fetched reports:', allReports);
+        const data = await response.json();
+
+        // API now returns { reports: [...], source: "mongodb"|"disk_fallback", count: N }
+        allReports = Array.isArray(data) ? data : (data.reports || []);
+        console.log(`[AERIS Reports] Fetched ${allReports.length} reports from: ${data.source || 'unknown'}`);
 
         updateBentoStats(allReports);
         renderTable();
