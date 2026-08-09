@@ -3,7 +3,7 @@ Pydantic schemas for request/response validation.
 """
 
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from pydantic import BaseModel
 
 
@@ -47,6 +47,23 @@ class MovementScores(BaseModel):
     fatigue_score: float
 
 
+class CorrectiveExercise(BaseModel):
+    name: str
+    target_area: str
+    sets_reps: str
+    description: str
+    coaching_cue: str
+
+
+class LLMRecommendations(BaseModel):
+    engine: Optional[str] = None
+    executive_summary: Optional[str] = None
+    corrective_exercises: Optional[List[CorrectiveExercise]] = []
+    posture_and_ergonomics: Optional[List[str]] = []
+    recovery_protocol: Optional[List[str]] = []
+    actionable_tips: Optional[List[str]] = []
+
+
 class RiskReport(BaseModel):
     job_id: str
     video_name: str
@@ -56,3 +73,16 @@ class RiskReport(BaseModel):
     movement_scores: MovementScores
     alerts: List[str]
     recommendations: List[str]
+    llm_recommendations: Optional[Dict[str, Any]] = None
+
+
+class GenerateRecommendationsRequest(BaseModel):
+    job_id: Optional[str] = None
+    summary_override: Optional[Dict[str, Any]] = None
+
+
+class GenerateRecommendationsResponse(BaseModel):
+    success: bool
+    engine: str
+    llm_recommendations: Dict[str, Any]
+

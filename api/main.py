@@ -26,17 +26,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi.staticfiles import StaticFiles
 
-from api.routes import analyze, auth, report, status
+from api.routes import analyze, auth, recommendations, report, status
 
 app = FastAPI(
     title="Ergonomic Risk Analysis API",
     description=(
         "Upload a video of a person moving and receive a full biomechanical "
-        "risk assessment report. The pipeline uses Google MediaPipe to detect "
-        "33 body landmarks and calculates joint angles, trunk lean, knee valgus, "
-        "stability, and fatigue scores."
+        "risk assessment report. Powered by Google MediaPipe keypoint tracking "
+        "and Groq LLM physical therapy recommendation engine."
     ),
-    version="1.0.0",
+    version="1.1.0",
     contact={"name": "Risk Analyse Project"},
 )
 
@@ -50,10 +49,12 @@ app.add_middleware(
 )
 
 # ── Register routers ───────────────────────────────────────────────────────
-app.include_router(auth.router,    tags=["0. Authentication"])
-app.include_router(analyze.router, tags=["1. Analysis"])
-app.include_router(status.router,  tags=["2. Status"])
-app.include_router(report.router,  tags=["3. Report"])
+app.include_router(auth.router,            tags=["0. Authentication"])
+app.include_router(analyze.router,         tags=["1. Analysis"])
+app.include_router(status.router,          tags=["2. Status"])
+app.include_router(report.router,          tags=["3. Report"])
+app.include_router(recommendations.router, tags=["4. AI Recommendations"])
+
 
 # ── Serve Frontend Dashboard ───────────────────────────────────────────────
 frontend_path = PROJECT_ROOT / "frontend"

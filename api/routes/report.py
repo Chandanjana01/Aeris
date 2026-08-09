@@ -74,6 +74,7 @@ async def get_report(job_id: str):
         movement_scores=MovementScores(**data["movement_scores"]),
         alerts=data["alerts"],
         recommendations=data["recommendations"],
+        llm_recommendations=data.get("llm_recommendations"),
     )
 
 
@@ -111,8 +112,10 @@ async def list_all_reports():
                             movement_scores=MovementScores(**data["movement_scores"]),
                             alerts=data.get("alerts", []),
                             recommendations=data.get("recommendations", []),
+                            llm_recommendations=data.get("llm_recommendations"),
                         )
                     )
+
                 except Exception as exc:
                     print(f"Error loading report from {report_file}: {exc}")
                     continue

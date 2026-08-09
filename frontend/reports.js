@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function initUserProfile() {
     const userStr = localStorage.getItem('aeris_user');
     const profileNameEl = document.getElementById('userProfileName');
-    const profileBtn = document.getElementById('userProfileBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
     if (userStr && profileNameEl) {
         try {
             const user = JSON.parse(userStr);
@@ -26,8 +27,13 @@ function initUserProfile() {
                 profileNameEl.textContent = user.full_name;
             }
         } catch (e) {}
-    } else if (profileBtn) {
-        profileBtn.addEventListener('click', () => {
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            console.log('[AERIS] Logging out user...');
+            localStorage.removeItem('aeris_token');
+            localStorage.removeItem('aeris_user');
             window.location.href = 'login.html';
         });
     }
@@ -284,12 +290,75 @@ window.openReportModal = function(jobId) {
     const alertsContainer = document.getElementById('modalAlertsContainer');
     let alertsHtml = '';
 
-    if ((report.alerts || []).length === 0 && (report.recommendations || []).length === 0) {
+    const llmRecs = report.llm_recommendations;
+
+    if (llmRecs && typeof llmRecs === 'object') {
+        const engineName = llmRecs.engine || 'Groq LLM';
+        const execSummary = llmRecs.executive_summary || '';
+        const exercises = llmRecs.corrective_exercises || [];
+        const posture = llmRecs.posture_and_ergonomics || [];
+        const recovery = llmRecs.recovery_protocol || [];
+
+        alertsHtml += `
+            <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between bg-gradient-to-r from-emerald-900 to-teal-800 text-white p-3 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-emerald-400 text-base">auto_awesome</span>
+                        <span class="font-bold text-xs">AI Specialist Recommendations (${escapeHtml(engineName)})</span>
+                    </div>
+                </div>
+
+                ${execSummary ? `
+                <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-200 text-xs text-emerald-900">
+                    <strong class="block mb-1 text-emerald-950 font-bold">Executive Summary:</strong>
+                    ${escapeHtml(execSummary)}
+                </div>
+                ` : ''}
+
+                ${exercises.length > 0 ? `
+                <div class="flex flex-col gap-2">
+                    <strong class="text-xs font-bold text-on-surface">Targeted Exercises:</strong>
+                    ${exercises.map(ex => `
+                        <div class="p-2.5 bg-surface rounded-lg border border-outline-variant text-xs">
+                            <div class="flex justify-between font-bold text-on-surface">
+                                <span>${escapeHtml(ex.name)}</span>
+                                <span class="text-primary-green">${escapeHtml(ex.sets_reps || '')}</span>
+                            </div>
+                            <p class="text-outline text-[11px] font-medium">${escapeHtml(ex.description || '')}</p>
+                            ${ex.coaching_cue ? `<p class="text-teal-800 text-[11px] mt-1 bg-teal-50 p-1.5 rounded"><strong>Cue:</strong> ${escapeHtml(ex.coaching_cue)}</p>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+
+                ${(posture.length > 0 || recovery.length > 0) ? `
+                <div class="grid grid-cols-1 gap-2 text-xs">
+                    ${posture.length > 0 ? `
+                    <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-200 text-blue-900">
+                        <strong class="block mb-1 text-blue-950 font-bold">Posture & Ergonomics:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            ${posture.map(p => `<li>${escapeHtml(p)}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+                    ${recovery.length > 0 ? `
+                    <div class="p-2.5 bg-purple-50 rounded-lg border border-purple-200 text-purple-900">
+                        <strong class="block mb-1 text-purple-950 font-bold">Recovery Protocol:</strong>
+                        <ul class="list-disc pl-4 space-y-1">
+                            ${recovery.map(r => `<li>${escapeHtml(r)}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+            </div>
+        `;
+    } else if ((report.alerts || []).length === 0 && (report.recommendations || []).length === 0) {
         alertsHtml = `<p class="text-xs text-emerald-700 bg-emerald-50 p-3 rounded-lg border border-emerald-200">No posture abnormalities detected.</p>`;
     } else {
         (report.alerts || []).forEach(alertText => {
             alertsHtml += `
-                <div class="flex items-start gap-2 p-2.5 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-900 font-medium">
+                <div class="flex items-start gap-2 p-2.5 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-900 font-medium mb-2">
                     <span class="material-symbols-outlined text-amber-600 text-sm mt-0.5">warning</span>
                     <span>${escapeHtml(alertText)}</span>
                 </div>
@@ -297,7 +366,7 @@ window.openReportModal = function(jobId) {
         });
         (report.recommendations || []).forEach(recText => {
             alertsHtml += `
-                <div class="flex items-start gap-2 p-2.5 bg-emerald-50 rounded-lg border border-emerald-200 text-xs text-emerald-900 font-medium">
+                <div class="flex items-start gap-2 p-2.5 bg-emerald-50 rounded-lg border border-emerald-200 text-xs text-emerald-900 font-medium mb-2">
                     <span class="material-symbols-outlined text-emerald-600 text-sm mt-0.5">task_alt</span>
                     <span>${escapeHtml(recText)}</span>
                 </div>
@@ -305,6 +374,7 @@ window.openReportModal = function(jobId) {
         });
     }
     alertsContainer.innerHTML = alertsHtml;
+
 
     modal.classList.remove('hidden');
 };

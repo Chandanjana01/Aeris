@@ -8,7 +8,7 @@ from src.risk_assessment.risk_score import (
     overall_risk
 )
 
-from src.risk_assessment.recommendations import generate_recommendations
+from src.risk_assessment.recommendations import generate_recommendations, generate_llm_recommendations
 
 
 def get_risk_level(score):
@@ -37,8 +37,22 @@ def generate_report(summary):
     fatigue = fatigue_risk(summary)
 
     overall = overall_risk(summary)
+    risk_lvl = get_risk_level(overall)
 
     alerts, recommendations = generate_recommendations(summary)
+
+    # Enrich summary with computed scores for LLM context
+    enriched_summary = dict(summary) if isinstance(summary, dict) else summary.to_dict()
+    enriched_summary.update({
+        "knee_risk": knee,
+        "hip_risk": hip,
+        "spine_risk": spine,
+        "fatigue_risk": fatigue,
+        "overall_risk": round(overall, 2),
+        "risk_level": risk_lvl
+    })
+
+    llm_recs = generate_llm_recommendations(enriched_summary, alerts)
 
     report = {
 
@@ -46,7 +60,7 @@ def generate_report(summary):
 
         "overall_risk": round(overall, 2),
 
-        "risk_level": get_risk_level(overall),
+        "risk_level": risk_lvl,
 
         "body_part_risks": {
 
@@ -74,11 +88,14 @@ def generate_report(summary):
 
         "alerts": alerts,
 
-        "recommendations": recommendations
+        "recommendations": recommendations,
+
+        "llm_recommendations": llm_recs
 
     }
 
     return report
+
 
 
 def save_report(report, output_json):

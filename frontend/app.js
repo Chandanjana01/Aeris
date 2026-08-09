@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function initUserProfile() {
     const userStr = localStorage.getItem('aeris_user');
     const profileNameEl = document.getElementById('userProfileName');
-    const profileBtn = document.getElementById('userProfileBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
     if (userStr && profileNameEl) {
         try {
             const user = JSON.parse(userStr);
@@ -30,8 +31,13 @@ function initUserProfile() {
                 profileNameEl.textContent = user.full_name;
             }
         } catch (e) {}
-    } else if (profileBtn) {
-        profileBtn.addEventListener('click', () => {
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            console.log('[AERIS] Logging out user...');
+            localStorage.removeItem('aeris_token');
+            localStorage.removeItem('aeris_user');
             window.location.href = 'login.html';
         });
     }
@@ -355,7 +361,7 @@ function updateDashboardUI(report) {
     }
 
     // 5. Update Alerts & Recommendations
-    updateAlertsAndRecommendations(report.alerts, report.recommendations);
+    updateAlertsAndRecommendations(report.alerts, report.recommendations, report.llm_recommendations);
 }
 
 /**
@@ -383,12 +389,132 @@ function updateRiskBar(barId, valId, value) {
 }
 
 /**
- * Display Alerts & Recommendations list
+ * Display Alerts & Recommendations list with Groq LLM formatting
  */
-function updateAlertsAndRecommendations(alerts = [], recommendations = []) {
+function updateAlertsAndRecommendations(alerts = [], recommendations = [], llmRecs = null) {
     const container = document.getElementById('recommendationsContainer');
     if (!container) return;
 
+    let html = '';
+
+    // If Groq LLM recommendations exist, render structured AI layout
+    if (llmRecs && typeof llmRecs === 'object') {
+        const engineName = llmRecs.engine || 'Groq LLM';
+        const execSummary = llmRecs.executive_summary || '';
+        const exercises = llmRecs.corrective_exercises || [];
+        const posture = llmRecs.posture_and_ergonomics || [];
+        const recovery = llmRecs.recovery_protocol || [];
+        const tips = llmRecs.actionable_tips || [];
+
+        html += `
+            <div class="flex flex-col gap-4 mt-2">
+                <!-- LLM Header Badge -->
+                <div class="flex items-center justify-between bg-gradient-to-r from-emerald-900 to-teal-800 text-white p-3.5 rounded-xl shadow-sm">
+                    <div class="flex items-center gap-2.5">
+                        <span class="material-symbols-outlined text-emerald-400 text-xl">auto_awesome</span>
+                        <div>
+                            <h4 class="font-bold text-xs tracking-wider uppercase">AI Physical Therapy Specialist</h4>
+                            <p class="text-[11px] text-emerald-200">${escapeHtml(engineName)}</p>
+                        </div>
+                    </div>
+                    <span class="bg-emerald-400/20 text-emerald-300 text-[10px] font-mono px-2.5 py-1 rounded-full border border-emerald-400/30 font-bold uppercase">GROQ POWERED</span>
+                </div>
+
+                ${execSummary ? `
+                <!-- Executive Summary -->
+                <div class="p-3.5 bg-emerald-50/80 rounded-xl border border-emerald-200">
+                    <h5 class="text-xs font-bold text-emerald-950 uppercase tracking-wide mb-1 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-emerald-700 text-sm">clinical_notes</span> Clinical Executive Summary
+                    </h5>
+                    <p class="text-xs text-emerald-900 leading-relaxed font-medium">${escapeHtml(execSummary)}</p>
+                </div>
+                ` : ''}
+
+                ${alerts.length > 0 ? `
+                <!-- System Alerts -->
+                <div class="flex flex-col gap-2">
+                    <h5 class="text-xs font-bold text-amber-900 uppercase tracking-wide flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-amber-600 text-sm">warning</span> Detected Kinematic Deviations
+                    </h5>
+                    ${alerts.map(alertText => `
+                        <div class="flex items-start gap-2.5 p-2.5 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-900 font-medium">
+                            <span class="material-symbols-outlined text-amber-600 text-sm mt-0.5">priority_high</span>
+                            <span>${escapeHtml(alertText)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+
+                ${exercises.length > 0 ? `
+                <!-- Corrective Exercise Routine -->
+                <div class="flex flex-col gap-2">
+                    <h5 class="text-xs font-bold text-on-surface uppercase tracking-wide flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-primary-green text-sm">fitness_center</span> Targeted Corrective Exercises
+                    </h5>
+                    <div class="grid grid-cols-1 gap-2.5">
+                        ${exercises.map(ex => `
+                            <div class="p-3 bg-surface rounded-xl border border-surface-container-high shadow-2xs hover:border-primary-green/40 transition-colors">
+                                <div class="flex justify-between items-start mb-1">
+                                    <h6 class="font-bold text-xs text-on-surface">${escapeHtml(ex.name)}</h6>
+                                    <span class="text-[10px] font-bold text-primary-green bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">${escapeHtml(ex.sets_reps || '')}</span>
+                                </div>
+                                <p class="text-[11px] text-outline font-medium mb-1.5"><strong class="text-on-surface-variant">Target:</strong> ${escapeHtml(ex.target_area || '')}</p>
+                                <p class="text-xs text-on-surface-variant leading-normal mb-1.5">${escapeHtml(ex.description || '')}</p>
+                                ${ex.coaching_cue ? `
+                                <div class="text-[11px] text-teal-900 bg-teal-50/80 p-2 rounded-lg border border-teal-100 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-teal-700 text-xs shrink-0">tips_and_updates</span>
+                                    <span><strong>Cue:</strong> ${escapeHtml(ex.coaching_cue)}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                ${(posture.length > 0 || recovery.length > 0) ? `
+                <!-- Ergonomics & Recovery Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    ${posture.length > 0 ? `
+                    <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-200/60">
+                        <h5 class="text-xs font-bold text-blue-950 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-blue-700 text-sm">accessibility</span> Posture & Ergonomics
+                        </h5>
+                        <ul class="flex flex-col gap-1.5">
+                            ${posture.map(p => `
+                                <li class="text-xs text-blue-900 font-medium flex items-start gap-1.5">
+                                    <span class="material-symbols-outlined text-blue-600 text-xs mt-0.5">check</span>
+                                    <span>${escapeHtml(p)}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+
+                    ${recovery.length > 0 ? `
+                    <div class="p-3 bg-purple-50/60 rounded-xl border border-purple-200/60">
+                        <h5 class="text-xs font-bold text-purple-950 uppercase tracking-wide mb-2 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-purple-700 text-sm">self_improvement</span> Recovery & Mobility
+                        </h5>
+                        <ul class="flex flex-col gap-1.5">
+                            ${recovery.map(r => `
+                                <li class="text-xs text-purple-900 font-medium flex items-start gap-1.5">
+                                    <span class="material-symbols-outlined text-purple-600 text-xs mt-0.5">restore</span>
+                                    <span>${escapeHtml(r)}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+            </div>
+        `;
+        container.innerHTML = html;
+        return;
+    }
+
+    // Fallback standard rules rendering
     if (alerts.length === 0 && recommendations.length === 0) {
         container.innerHTML = `
             <p class="text-body-sm text-emerald-700 font-medium bg-emerald-50 p-3 rounded-lg border border-emerald-200 flex items-center gap-2">
@@ -399,13 +525,13 @@ function updateAlertsAndRecommendations(alerts = [], recommendations = []) {
         return;
     }
 
-    let html = '<div class="flex flex-col gap-3 mt-2">';
+    html = '<div class="flex flex-col gap-3 mt-2">';
 
     alerts.forEach((alertText) => {
         html += `
             <div class="flex items-start gap-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
                 <span class="material-symbols-outlined text-amber-600 text-sm mt-0.5" data-icon="warning">warning</span>
-                <span class="text-body-sm text-amber-900 font-medium">${alertText}</span>
+                <span class="text-body-sm text-amber-900 font-medium">${escapeHtml(alertText)}</span>
             </div>
         `;
     });
@@ -414,7 +540,7 @@ function updateAlertsAndRecommendations(alerts = [], recommendations = []) {
         html += `
             <div class="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-200">
                 <span class="material-symbols-outlined text-emerald-600 text-sm mt-0.5" data-icon="task_alt">task_alt</span>
-                <span class="text-body-sm text-emerald-900 font-medium">${recText}</span>
+                <span class="text-body-sm text-emerald-900 font-medium">${escapeHtml(recText)}</span>
             </div>
         `;
     });
@@ -422,6 +548,20 @@ function updateAlertsAndRecommendations(alerts = [], recommendations = []) {
     html += '</div>';
     container.innerHTML = html;
 }
+
+function escapeHtml(str) {
+    if (typeof str !== 'string') return str;
+    return str.replace(/[&<>"']/g, function(m) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[m];
+    });
+}
+
 
 /**
  * Reset analyze button UI state

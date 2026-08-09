@@ -22,9 +22,8 @@ def view_users():
     rows = cursor.fetchall()
     conn.close()
 
-    print("==================================================================================================================================================")
-    print(" AERIS SQLite User Accounts & Password Hashes (data/aeris.db)")
-    print("==================================================================================================================================================")
+    
+    print(" 👥 AERIS SQLite User Accounts & Password Hashes (data/aeris.db)")
     
     if not rows:
         print("No registered users found in database.")
@@ -35,6 +34,7 @@ def view_users():
     print("-" * 146)
     for row in rows:
         pwd_hash = row['password_hash']
+        # Truncate slightly for clean column alignment if very long
         display_hash = pwd_hash[:42] + "..." if len(pwd_hash) > 45 else pwd_hash
         print(f"{row['id']:<4} | {row['full_name']:<18} | {row['email']:<22} | {row['role']:<8} | {display_hash:<45} | {row['created_at']:<19}")
     print("==================================================================================================================================================")

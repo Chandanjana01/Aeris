@@ -51,3 +51,7 @@ def generate_recommendations(summary: dict):
         recommendations.append("Postural mechanics and joint alignment are optimal. Maintain current conditioning.")
 
     return alerts, recommendations
+
+
+from src.risk_assessment.llm_recommendations import generate_llm_recommendations
+
