@@ -1,442 +1,251 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>AERIS | Athlete Profile</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AERIS | Unified Athlete Profile & Biomechanical Baselines</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- AERIS Custom Design Tokens CSS -->
+  <link rel="stylesheet" href="/aeris.css">
+
+  <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
-          "colors": {
-            "on-tertiary": "#ffffff", "inverse-primary": "#62df7d",
-            "error-container": "#ffdad6", "inverse-surface": "#293040",
-            "on-error-container": "#93000a", "on-secondary-fixed": "#002109",
-            "tertiary-container": "#008644", "tertiary-fixed": "#6dfe9c",
-            "on-surface": "#141b2b", "primary-fixed": "#7ffc97",
-            "surface-container-low": "#f1f3ff", "primary": "#006b2c",
-            "surface-container": "#e9edff", "surface-container-lowest": "#ffffff",
-            "on-secondary-container": "#007432", "secondary-container": "#6bff8f",
-            "outline-variant": "#bdcaba", "secondary-fixed": "#6bff8f",
-            "surface": "#f9f9ff", "surface-container-highest": "#dce2f7",
-            "on-background": "#141b2b", "background": "#f1f3ff",
-            "on-error": "#ffffff", "secondary": "#006e2f",
-            "on-surface-variant": "#3e4a3d", "primary-fixed-dim": "#62df7d",
-            "on-primary-container": "#f7fff2", "secondary-fixed-dim": "#4ae176",
-            "surface-tint": "#006e2d", "primary-container": "#00873a",
-            "surface-container-high": "#e1e8fd", "surface-bright": "#f9f9ff",
-            "inverse-on-surface": "#edf0ff", "error": "#ba1a1a",
-            "tertiary": "#006a34", "on-primary": "#ffffff",
-            "on-secondary": "#ffffff", "on-primary-fixed-variant": "#005320",
-            "on-primary-fixed": "#002109", "on-secondary-fixed-variant": "#005321",
-            "on-tertiary-container": "#f6fff3", "on-tertiary-fixed": "#00210c",
-            "outline": "#6e7b6c", "surface-dim": "#d3daef",
-            "on-tertiary-fixed-variant": "#005227", "surface-variant": "#dce2f7",
-            "tertiary-fixed-dim": "#4de082",
-            "primary-green": "#16A34A", "accent-soft": "#DCFCE7"
+          colors: {
+            "surface-container-highest": "#dee4df",
+            "surface-bright": "#fafbfa",
+            "background": "#fafbfa",
+            "surface": "#fafbfa",
+            "primary": "#16a34a",
+            "primary-container": "#b7f34a",
+            "on-primary-container": "#111714",
+            "error": "#ba1a1a",
+            "outline-variant": "#c3c9b0"
           },
-          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-          "spacing": {
-            "gutter": "24px", "margin-desktop": "48px", "unit": "8px",
-            "stack-md": "24px", "container-max": "1440px", "stack-sm": "12px",
-            "margin-mobile": "20px", "stack-lg": "40px"
-          },
-          "fontFamily": {
-            "body-sm": ["Inter"], "headline-lg": ["Plus Jakarta Sans"],
-            "display-hero-mobile": ["Plus Jakarta Sans"], "display-hero": ["Plus Jakarta Sans"],
-            "label-caps": ["Inter"], "body-md": ["Inter"],
-            "headline-md": ["Plus Jakarta Sans"], "body-lg": ["Inter"]
-          },
-          "fontSize": {
-            "body-sm": ["14px", {"lineHeight":"20px","fontWeight":"400"}],
-            "headline-lg": ["32px", {"lineHeight":"40px","letterSpacing":"-0.02em","fontWeight":"700"}],
-            "display-hero-mobile": ["36px", {"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"800"}],
-            "display-hero": ["56px", {"lineHeight":"1.1","letterSpacing":"-0.04em","fontWeight":"800"}],
-            "label-caps": ["12px", {"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"700"}],
-            "body-md": ["16px", {"lineHeight":"24px","fontWeight":"400"}],
-            "headline-md": ["24px", {"lineHeight":"32px","fontWeight":"700"}],
-            "body-lg": ["18px", {"lineHeight":"28px","fontWeight":"400"}]
+          fontFamily: {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"]
           }
         }
       }
     }
-</script>
-<style>
-    body { background-color: #f1f3ff; }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .material-symbols-outlined[data-weight="fill"] { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-</style>
+  </script>
 </head>
-<body class="font-body-md text-on-surface antialiased min-h-screen">
+<body class="bg-background text-zinc-900 antialiased font-body min-h-screen flex flex-col">
 
-<!-- Unified Top Navigation Bar -->
-<nav class="bg-surface-container-lowest shadow-[0_10px_30px_rgba(0,0,0,0.04)] hidden md:block border-b border-surface-container-low sticky top-0 z-50">
-    <div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
-        <div class="text-headline-md font-headline-md font-extrabold tracking-tighter text-primary flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary-green text-3xl">sports_score</span>
-            AERIS
-        </div>
-        <div class="flex gap-stack-md font-body-md text-body-md">
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="index.html">Dashboard</a>
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="reports.html">Reports</a>
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="history.html">Progress</a>
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="settings.html">Settings</a>
-        </div>
-        <div class="flex items-center gap-3">
-            <button id="userProfileBtn" title="View Profile" class="flex items-center justify-center p-0.5 rounded-full border-2 border-primary-green/30 hover:border-primary-green transition-all cursor-pointer shadow-xs hover:scale-105">
-                <img id="userNavAvatar" alt="Athlete Profile Avatar" class="w-8 h-8 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtv09NYosvrJzaXK9Y7vkNm3kjFxn42xJzB565_VF6lvgVKJHKFmYLdxp-AuH7AwmLLMZPFouYasppm359lZmeRU4DjqmoK3TGA8ziCkL8VbCSdc4LMicxe0fKDT5wgxXugwS0fqaov2X8BH5u9HURMVKOJPpN6i-p8Y6L62nLLw7ku-HEqU_Kj-w2pSsbeB7DZmnw7ueAzcq1blrY9p4SYnUiR4g6IHlTLfteM2awdXmIpTT_9twt6A"/>
-            </button>
-        </div>
+  <!-- Top Navigation Bar -->
+  <nav class="fixed top-0 w-full z-50 h-[84px] bg-[#fafbfa]/95 backdrop-blur-md border-b border-slate-200 flex justify-between items-center px-6 md:px-10 shadow-sm">
+    <div class="flex items-center gap-3 md:gap-6">
+      <button id="aeris-menu-toggle" aria-label="Toggle Menu" class="p-2 rounded-xl text-slate-700 hover:text-emerald-700 hover:bg-slate-100 transition-colors flex items-center justify-center cursor-pointer">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+      <a href="/index.html" class="flex items-center gap-3 py-1">
+        <img src="/logo.png" alt="AERIS Logo" class="h-14 md:h-16 w-auto object-contain max-h-16 transition-transform hover:scale-105">
+      </a>
     </div>
-</nav>
+  </nav>
 
-<!-- Main Content -->
-<main class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12">
+  <!-- Main Content Container -->
+  <main class="mt-[84px] p-6 md:p-10 flex-grow max-w-[1600px] w-full mx-auto pb-20">
 
-    <!-- Page Header -->
-    <div class="mb-stack-lg">
-        <h1 class="font-headline-lg text-headline-lg md:font-display-hero md:text-display-hero text-on-surface mb-2">My Profile</h1>
-        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Manage your athletic profile and biometric data for accurate injury risk analysis.</p>
-    </div>
+    
+    <header class="mb-8">
+      <h1 class="text-2xl md:text-3xl font-extrabold font-headline text-slate-900 mb-1">
+        Athlete Profile & Biomechanical Baselines
+      </h1>
+      <p class="text-slate-600 text-sm">
+        Manage your biometric physical traits, baseline movement thresholds, and active injury logs.
+      </p>
+    </header>
 
-    <!-- Bento Grid Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        <!-- Left Column: Profile Identity + Security + Logout -->
-        <div class="lg:col-span-4 flex flex-col gap-gutter">
+      <!-- Left Column: Athlete Avatar & Status (4 Cols) -->
+      <div class="lg:col-span-4 flex flex-col gap-6">
 
-            <!-- Profile Identity Card -->
-            <div class="bg-surface rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] p-8 flex flex-col items-center text-center border border-outline-variant/10 hover:shadow-lg transition-shadow">
-                <div class="relative mb-6 group cursor-pointer" id="avatarUploadTrigger" title="Click to change profile picture">
-                    <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-surface shadow-md relative">
-                        <img id="profileAvatar" class="w-full h-full object-cover" alt="Athlete Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEEfp90YSPHxcSh0kMtjokbtWkKTcI5_hDc1JzBgcF4mu7SXUEg9lYYSUbMPTHGvFEhmIzpTHSGbiHEcn0Fgc11jJ_e1ilzrb17hlGXMqF94ybUpmq2muPsZqYcRnUuV-ZtYzJUxRTIImpjgqbzL9KCAh1q2F-WlzFqR-kZ00lKTV_iTcbHyZT04TZexOGu9ZnfAukGFsqOeOWvHxD-DPI_bGg0OxI9hOf6xLW4W2yJvE0J-ExTpWOsg"/>
-                    </div>
-                    <div class="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span class="material-symbols-outlined text-white text-2xl" data-icon="photo_camera">photo_camera</span>
-                        <span class="text-white text-[10px] font-bold mt-1">Change Photo</span>
-                    </div>
-                    <input type="file" id="profileAvatarInput" accept="image/*" class="hidden" />
-                </div>
-                <h2 id="profileDisplayName" class="font-headline-md text-headline-md text-on-surface mb-1">Athlete Name</h2>
-                <p id="profileDisplayEmail" class="font-body-sm text-body-sm text-on-surface-variant mb-6">athlete@aeris.ai</p>
-                <div class="w-full border-t border-outline-variant/20 pt-6">
-                    <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider mb-3 text-left">Current Status</h3>
-                    <div class="inline-flex items-center gap-2 bg-[#DCFCE7] text-[#16A34A] px-4 py-2 rounded-full w-full justify-center">
-                        <span class="material-symbols-outlined text-[18px]" data-icon="check_circle" data-weight="fill">check_circle</span>
-                        <span class="font-body-sm font-semibold">Cleared for Play</span>
-                    </div>
-                </div>
+        <!-- Profile Summary Card -->
+        <div class="aeris-card p-6 flex flex-col items-center text-center">
+          <div class="w-24 h-24 rounded-full bg-emerald-600 text-white text-3xl font-extrabold font-headline flex items-center justify-center mb-4 shadow-lg border-4 border-emerald-100 user-display-avatar">
+            AM
+          </div>
+
+          <h2 class="font-headline font-extrabold text-slate-900 text-xl user-display-name">Alex Morgan</h2>
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5" id="profile-sport-position">
+            Track & Field / Basketball • Point Guard
+          </p>
+
+          <div class="mt-4 px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-2 border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+            Cleared for Full Competition
+          </div>
+
+          <div class="w-full border-t border-slate-200 mt-6 pt-4 text-left space-y-3">
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500 font-semibold">Role / Rank</span>
+              <strong class="text-slate-900 uppercase user-display-role">Athlete</strong>
             </div>
-
-            <!-- Account Security Card -->
-            <div class="bg-surface rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] p-6 border border-outline-variant/10 hover:shadow-lg transition-shadow">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-8 h-8 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
-                        <span class="material-symbols-outlined" data-icon="shield_lock">shield_lock</span>
-                    </div>
-                    <h3 class="font-headline-md text-body-lg font-semibold text-on-surface">Account Security</h3>
-                </div>
-                <div class="flex flex-col gap-3">
-                    <button class="w-full bg-surface border border-outline-variant rounded-lg py-3 px-4 flex items-center justify-between hover:bg-surface-container-low hover:border-primary transition-colors group" type="button">
-                        <span class="font-body-sm font-semibold text-primary">Change Password</span>
-                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
-                    </button>
-                    <button class="w-full bg-surface border border-outline-variant rounded-lg py-3 px-4 flex items-center justify-between hover:bg-surface-container-low hover:border-primary transition-colors group" type="button">
-                        <span class="font-body-sm font-semibold text-primary">Two-Factor Authentication</span>
-                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors" data-icon="chevron_right">chevron_right</span>
-                    </button>
-                </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500 font-semibold">Height</span>
+              <strong class="text-slate-900" id="display-height">182 cm</strong>
             </div>
-
-            <!-- Logout Card -->
-            <div class="bg-surface rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] p-6 border border-rose-100 hover:shadow-lg transition-shadow">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-rose-600">
-                        <span class="material-symbols-outlined text-[18px]">logout</span>
-                    </div>
-                    <h3 class="font-headline-md text-body-lg font-semibold text-on-surface">Sign Out</h3>
-                </div>
-                <p class="font-body-sm text-on-surface-variant mb-4">End your current AERIS session and return to the login screen.</p>
-                <button id="logoutBtn" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 py-3 px-4 rounded-lg font-body-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-95">
-                    <span class="material-symbols-outlined text-[18px]">logout</span>
-                    Sign Out Account
-                </button>
+            <div class="flex justify-between text-xs">
+              <span class="text-slate-500 font-semibold">Weight</span>
+              <strong class="text-slate-900" id="display-weight">78 kg</strong>
             </div>
-
+          </div>
         </div>
 
-        <!-- Right Column: Biometric & Athletic Data Form -->
-        <div class="lg:col-span-8">
-            <div class="bg-surface rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] p-8 md:p-10 border border-outline-variant/10">
-                <h2 class="font-headline-md text-headline-md text-on-surface mb-8 pb-4 border-b border-outline-variant/20">Biometric &amp; Athletic Data</h2>
+        <!-- Baseline Kinematics Thresholds Card -->
+        <div class="aeris-card p-6">
+          <h3 class="font-headline font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-emerald-600">tune</span>
+            Kinematic Baselines
+          </h3>
 
-                <!-- Success Alert Notification -->
-                <div id="profileSaveAlert" class="hidden mb-6 p-4 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 font-medium text-sm flex items-center justify-between shadow-xs transition-all">
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-emerald-600 text-xl">check_circle</span>
-                        <span>Profile saved successfully!</span>
-                    </div>
-                    <button type="button" class="text-emerald-700 hover:text-emerald-900 font-bold text-xs" onclick="document.getElementById('profileSaveAlert').classList.add('hidden')">✕</button>
-                </div>
-
-                <form class="space-y-8" id="profileForm">
-                    <!-- Personal Info -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Full Name</label>
-                            <input id="profileFullName" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all" type="text" placeholder="Athlete Name" value="Athlete Name"/>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Email Address</label>
-                            <input id="profileEmail" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all" type="email" placeholder="athlete@aeris.ai" value="athlete@aeris.ai"/>
-                        </div>
-                    </div>
-
-                    <!-- Biometrics -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Age</label>
-                            <input id="profileAge" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all" type="number" value="24"/>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Gender</label>
-                            <select id="profileGender" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all appearance-none cursor-pointer">
-                                <option selected value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Height (cm)</label>
-                            <input id="profileHeight" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all" type="number" value="185"/>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Weight (kg)</label>
-                            <input id="profileWeight" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all" type="number" value="82"/>
-                        </div>
-                    </div>
-                    <!-- Athletic Info -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Primary Sport</label>
-                            <select id="profileSport" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all appearance-none cursor-pointer">
-                                <option selected value="Sprinting">Sprinting</option>
-                                <option value="Football">Football</option>
-                                <option value="Basketball">Basketball</option>
-                                <option value="Cycling">Cycling</option>
-                                <option value="Cricket">Cricket</option>
-                            </select>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Training Intensity</label>
-                            <select id="profileIntensity" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all appearance-none cursor-pointer">
-                                <option value="Low">Low</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Hard">Hard</option>
-                                <option selected value="Professional">Professional</option>
-                            </select>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Weekly Sessions</label>
-                            <input id="profileSessions" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all" type="number" value="6"/>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Previous Injury?</label>
-                            <select id="profileInjury" class="w-full bg-surface-container-lowest border-0 rounded-lg px-4 py-3 font-body-md text-on-surface shadow-sm focus:ring-2 focus:ring-[#16A34A] focus:border-transparent transition-all appearance-none cursor-pointer">
-                                <option selected value="No Previous Injury">No Previous Injury</option>
-                                <option value="Yes, minor">Yes, minor</option>
-                                <option value="Yes, major">Yes, major</option>
-                            </select>
-                        </div>
-                    </div>
-                    <!-- Save / Discard Actions -->
-                    <div class="flex items-center justify-end gap-4 pt-8 border-t border-outline-variant/20 mt-8">
-                        <button class="px-6 py-3 rounded-lg border border-outline text-on-surface-variant font-body-sm font-medium hover:bg-surface-container hover:text-on-surface transition-colors" type="button" onclick="this.form.reset()">
-                            Discard
-                        </button>
-                        <button id="saveProfileChangesBtn" class="px-6 py-3 rounded-lg bg-[#16A34A] text-white font-body-sm font-medium hover:bg-[#15803d] transition-colors shadow-sm flex items-center gap-2 transform active:scale-95 duration-150" type="submit">
-                            <span class="material-symbols-outlined text-[20px]" data-icon="save">save</span>
-                            Save Changes
-                        </button>
-                    </div>
-                </form>
+          <div class="space-y-3 text-xs">
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center">
+              <span class="font-semibold text-slate-700">Knee Stress Baseline</span>
+              <strong class="font-mono text-emerald-700" id="display-base-knee">24.5%</strong>
             </div>
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center">
+              <span class="font-semibold text-slate-700">Lumbar Flexion Baseline</span>
+              <strong class="font-mono text-emerald-700" id="display-base-spine">18.2%</strong>
+            </div>
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center">
+              <span class="font-semibold text-slate-700">Hip Symmetry Baseline</span>
+              <strong class="font-mono text-emerald-700" id="display-base-hip">15.0%</strong>
+            </div>
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center">
+              <span class="font-semibold text-slate-700">Fatigue Index Limit</span>
+              <strong class="font-mono text-emerald-700" id="display-base-fatigue">20.0%</strong>
+            </div>
+          </div>
         </div>
+
+      </div>
+
+      <!-- Right Column: Edit Profile Form (8 Cols) -->
+      <div class="lg:col-span-8">
+        <div class="aeris-card p-6">
+          <div class="border-b border-slate-200 pb-4 mb-6">
+            <h2 class="font-headline font-extrabold text-slate-900 text-lg">Edit Athlete Details</h2>
+            <p class="text-xs text-slate-500">Update your information to calibrate pose estimation algorithms.</p>
+          </div>
+
+          <form id="profile-form" onsubmit="handleProfileSubmit(event)" class="space-y-6">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Full Name</label>
+                <input type="text" id="input-full-name" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Email Address</label>
+                <input type="email" id="input-email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Primary Sport</label>
+                <input type="text" id="input-sport" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Position / Specialty</label>
+                <input type="text" id="input-position" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Height</label>
+                <input type="text" id="input-height" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Weight</label>
+                <input type="text" id="input-weight" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Active Injury History & Clinical Notes</label>
+              <textarea id="input-injury" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500"></textarea>
+            </div>
+
+            <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
+              <button type="button" onclick="loadProfileData()" class="btn-secondary py-2.5 px-6 text-xs rounded-full">Reset</button>
+              <button type="submit" class="btn-primary py-2.5 px-6 text-xs rounded-full">Save Changes</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
 
     </div>
-</main>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        initUserProfile();
+  </main>
 
-        // Logout
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('aeris_token');
-                localStorage.removeItem('aeris_user');
-                window.location.href = 'login.html';
-            });
-        }
+  <script src="/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", loadProfileData);
 
-        // Profile btn → stays on profile (already here)
-        const profileBtn = document.getElementById('userProfileBtn');
-        if (profileBtn) {
-            profileBtn.style.cursor = 'default';
-        }
+    async function loadProfileData() {
+      try {
+        const user = await apiRequest("/api/user/profile", "GET");
 
-        // Save form handler
-        const profileForm = document.getElementById('profileForm');
-        if (profileForm) {
-            profileForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const btn = document.getElementById('saveProfileChangesBtn') || profileForm.querySelector('[type="submit"]');
-                const alertEl = document.getElementById('profileSaveAlert');
+        document.getElementById("input-full-name").value = user.full_name || "Alex Morgan";
+        document.getElementById("input-email").value = user.email || "alex.morgan@aeris.ai";
+        document.getElementById("input-sport").value = user.sport || "Track & Field / Basketball";
+        document.getElementById("input-position").value = user.position || "Point Guard / Sprinter";
+        document.getElementById("input-height").value = user.height || "182 cm";
+        document.getElementById("input-weight").value = user.weight || "78 kg";
+        document.getElementById("input-injury").value = user.injury_history || "Left ACL Strain (2024)";
 
-                const fullName = document.getElementById('profileFullName')?.value || '';
-                const email = document.getElementById('profileEmail')?.value || '';
-                const age = document.getElementById('profileAge')?.value || '';
-                const gender = document.getElementById('profileGender')?.value || '';
-                const height = document.getElementById('profileHeight')?.value || '';
-                const weight = document.getElementById('profileWeight')?.value || '';
-                const sport = document.getElementById('profileSport')?.value || '';
-                const intensity = document.getElementById('profileIntensity')?.value || '';
-                const sessions = document.getElementById('profileSessions')?.value || '';
-                const injury = document.getElementById('profileInjury')?.value || '';
+        document.getElementById("profile-sport-position").textContent = `${user.sport || 'Track'} • ${user.position || 'Athlete'}`;
+        document.getElementById("display-height").textContent = user.height || "182 cm";
+        document.getElementById("display-weight").textContent = user.weight || "78 kg";
+        document.getElementById("display-base-knee").textContent = (user.baseline_knee || 24.5).toFixed(1) + "%";
+        document.getElementById("display-base-spine").textContent = (user.baseline_spine || 18.2).toFixed(1) + "%";
+        document.getElementById("display-base-hip").textContent = (user.baseline_hip || 15.0).toFixed(1) + "%";
+        document.getElementById("display-base-fatigue").textContent = (user.baseline_fatigue || 20.0).toFixed(1) + "%";
 
-                // Update aeris_user object in localStorage
-                let user = {};
-                const userStr = localStorage.getItem('aeris_user');
-                if (userStr) {
-                    try { user = JSON.parse(userStr); } catch(err) {}
-                }
-                if (fullName) user.full_name = fullName;
-                if (email) user.email = email;
-                localStorage.setItem('aeris_user', JSON.stringify(user));
-
-                // Save profile data to localStorage
-                const profileData = { fullName, email, age, gender, height, weight, sport, intensity, sessions, injury };
-                localStorage.setItem('aeris_profile_data', JSON.stringify(profileData));
-
-                // Update UI display card immediately
-                const profileDisplayName = document.getElementById('profileDisplayName');
-                const profileDisplayEmail = document.getElementById('profileDisplayEmail');
-                if (fullName && profileDisplayName) profileDisplayName.textContent = fullName;
-                if (email && profileDisplayEmail) profileDisplayEmail.textContent = email;
-
-                // Show success alert message
-                if (alertEl) {
-                    alertEl.classList.remove('hidden');
-                    setTimeout(() => alertEl.classList.add('hidden'), 4000);
-                }
-
-                // Show saved feedback then revert button back to Save Changes
-                if (btn) {
-                    const originalHTML = '<span class="material-symbols-outlined text-[20px]" data-icon="save">save</span> Save Changes';
-                    btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check</span> Saved!';
-                    btn.classList.replace('bg-[#16A34A]', 'bg-emerald-700');
-                    setTimeout(() => {
-                        btn.innerHTML = originalHTML;
-                        btn.classList.replace('bg-emerald-700', 'bg-[#16A34A]');
-                    }, 2000);
-                }
-            });
-        }
-
-        // Change profile picture handler
-        const avatarTrigger = document.getElementById('avatarUploadTrigger');
-        const avatarInput = document.getElementById('profileAvatarInput');
-        if (avatarTrigger && avatarInput) {
-            avatarTrigger.addEventListener('click', () => avatarInput.click());
-            avatarInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (evt) => {
-                        const dataUrl = evt.target.result;
-                        const profileAvatar = document.getElementById('profileAvatar');
-                        const navAvatar = document.getElementById('userNavAvatar');
-                        if (profileAvatar) profileAvatar.src = dataUrl;
-                        if (navAvatar) navAvatar.src = dataUrl;
-                        localStorage.setItem('aeris_avatar', dataUrl);
-                        const userStr = localStorage.getItem('aeris_user');
-                        if (userStr) {
-                            try {
-                                const user = JSON.parse(userStr);
-                                user.avatar_url = dataUrl;
-                                localStorage.setItem('aeris_user', JSON.stringify(user));
-                            } catch(err) {}
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-    });
-
-    function initUserProfile() {
-        const userStr = localStorage.getItem('aeris_user');
-        const customAvatar = localStorage.getItem('aeris_avatar');
-        const profileDataStr = localStorage.getItem('aeris_profile_data');
-        const navAvatarEl = document.getElementById('userNavAvatar');
-        const profileAvatar = document.getElementById('profileAvatar');
-        const profileDisplayName = document.getElementById('profileDisplayName');
-        const profileDisplayEmail = document.getElementById('profileDisplayEmail');
-        const fullNameInput = document.getElementById('profileFullName');
-        const emailInput = document.getElementById('profileEmail');
-
-        if (customAvatar) {
-            if (navAvatarEl) navAvatarEl.src = customAvatar;
-            if (profileAvatar) profileAvatar.src = customAvatar;
-        }
-
-        if (userStr) {
-            try {
-                const user = JSON.parse(userStr);
-                if (user.full_name) {
-                    if (profileDisplayName) profileDisplayName.textContent = user.full_name;
-                    if (fullNameInput) fullNameInput.value = user.full_name;
-                }
-                if (user.email) {
-                    if (profileDisplayEmail) profileDisplayEmail.textContent = user.email;
-                    if (emailInput) emailInput.value = user.email;
-                }
-                if (!customAvatar && user.avatar_url) {
-                    if (navAvatarEl) navAvatarEl.src = user.avatar_url;
-                    if (profileAvatar) profileAvatar.src = user.avatar_url;
-                }
-            } catch (e) {}
-        }
-
-        if (profileDataStr) {
-            try {
-                const data = JSON.parse(profileDataStr);
-                if (data.fullName && fullNameInput) fullNameInput.value = data.fullName;
-                if (data.email && emailInput) emailInput.value = data.email;
-                if (data.age && document.getElementById('profileAge')) document.getElementById('profileAge').value = data.age;
-                if (data.gender && document.getElementById('profileGender')) document.getElementById('profileGender').value = data.gender;
-                if (data.height && document.getElementById('profileHeight')) document.getElementById('profileHeight').value = data.height;
-                if (data.weight && document.getElementById('profileWeight')) document.getElementById('profileWeight').value = data.weight;
-                if (data.sport && document.getElementById('profileSport')) document.getElementById('profileSport').value = data.sport;
-                if (data.intensity && document.getElementById('profileIntensity')) document.getElementById('profileIntensity').value = data.intensity;
-                if (data.sessions && document.getElementById('profileSessions')) document.getElementById('profileSessions').value = data.sessions;
-                if (data.injury && document.getElementById('profileInjury')) document.getElementById('profileInjury').value = data.injury;
-            } catch(e) {}
-        }
-
-        const profileBtn = document.getElementById('userProfileBtn');
-        if (profileBtn) {
-            profileBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.location.href = 'profile.html';
-            });
-        }
+      } catch (err) {
+        showToast("Error loading profile: " + err.message, "error");
+      }
     }
-</script>
+
+    async function handleProfileSubmit(e) {
+      e.preventDefault();
+      const payload = {
+        full_name: document.getElementById("input-full-name").value,
+        email: document.getElementById("input-email").value,
+        sport: document.getElementById("input-sport").value,
+        position: document.getElementById("input-position").value,
+        height: document.getElementById("input-height").value,
+        weight: document.getElementById("input-weight").value,
+        injury_history: document.getElementById("input-injury").value
+      };
+
+      try {
+        const updated = await apiRequest("/api/user/profile", "PUT", payload);
+        setAuthToken(getAuthToken(), updated);
+        showToast("Athlete profile updated successfully!", "success");
+        loadProfileData();
+      } catch (err) {
+        showToast("Failed to update profile: " + err.message, "error");
+      }
+    }
+  </script>
 </body>
 </html>

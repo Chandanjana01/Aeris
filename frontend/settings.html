@@ -1,380 +1,346 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>AERIS - Settings</title>
-    <!-- Tailwind CSS with Forms & Container Queries -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="styles.css"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AERIS | System Settings & Kinematic Calibration</title>
 
-    <!-- Tailwind Config with Unified Design System Tokens -->
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-error-container": "#93000a",
-                        "surface-bright": "#f9f9ff",
-                        "tertiary-container": "#008644",
-                        "on-primary-fixed": "#002109",
-                        "on-secondary": "#ffffff",
-                        "on-tertiary-fixed-variant": "#005227",
-                        "on-primary-container": "#f7fff2",
-                        "secondary-fixed-dim": "#4ae176",
-                        "error": "#ba1a1a",
-                        "tertiary-fixed": "#6dfe9c",
-                        "on-secondary-container": "#007432",
-                        "on-secondary-fixed": "#002109",
-                        "primary": "#006b2c",
-                        "error-container": "#ffdad6",
-                        "on-surface-variant": "#3e4a3d",
-                        "on-primary": "#ffffff",
-                        "surface-variant": "#dce2f7",
-                        "on-tertiary": "#ffffff",
-                        "primary-container": "#00873a",
-                        "surface": "#f9f9ff",
-                        "surface-container": "#e9edff",
-                        "primary-fixed-dim": "#62df7d",
-                        "on-tertiary-container": "#f6fff3",
-                        "on-primary-fixed-variant": "#005320",
-                        "secondary-fixed": "#6bff8f",
-                        "on-background": "#141b2b",
-                        "outline": "#6e7b6c",
-                        "tertiary-fixed-dim": "#4de082",
-                        "surface-container-highest": "#dce2f7",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-container-low": "#f1f3ff",
-                        "primary-fixed": "#7ffc97",
-                        "inverse-on-surface": "#edf0ff",
-                        "secondary-container": "#6bff8f",
-                        "on-tertiary-fixed": "#00210c",
-                        "on-secondary-fixed-variant": "#005321",
-                        "secondary": "#006e2f",
-                        "surface-tint": "#006e2d",
-                        "surface-dim": "#d3daef",
-                        "on-surface": "#141b2b",
-                        "inverse-surface": "#293040",
-                        "background": "#f9f9ff",
-                        "surface-container-high": "#e1e8fd",
-                        "tertiary": "#006a34",
-                        "inverse-primary": "#62df7d",
-                        "outline-variant": "#bdcaba",
-                        "on-error": "#ffffff",
-                        "accent-soft": "#DCFCE7",
-                        "primary-green": "#16A34A"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "2xl": "1rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "unit": "8px",
-                        "container-max": "1440px",
-                        "stack-sm": "12px",
-                        "stack-lg": "40px",
-                        "gutter": "24px",
-                        "margin-mobile": "20px",
-                        "stack-md": "24px",
-                        "margin-desktop": "48px"
-                    },
-                    "fontFamily": {
-                        "body-sm": ["Inter"],
-                        "body-md": ["Inter"],
-                        "body-lg": ["Inter"],
-                        "display-hero": ["Plus Jakarta Sans"],
-                        "headline-lg": ["Plus Jakarta Sans"],
-                        "label-caps": ["Inter"],
-                        "headline-md": ["Plus Jakarta Sans"]
-                    }
-                }
-            }
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- AERIS Custom Design Tokens CSS -->
+  <link rel="stylesheet" href="/aeris.css">
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-highest": "#dee4df",
+            "surface-bright": "#fafbfa",
+            "background": "#fafbfa",
+            "surface": "#fafbfa",
+            "primary": "#16a34a",
+            "primary-container": "#b7f34a",
+            "on-primary-container": "#111714",
+            "error": "#ba1a1a",
+            "outline-variant": "#c3c9b0"
+          },
+          fontFamily: {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"]
+          }
         }
-    </script>
+      }
+    }
+  </script>
 </head>
-<body class="bg-surface-container-lowest text-on-surface font-body-md min-h-screen selection:bg-accent-soft selection:text-primary-green">
+<body class="bg-background text-zinc-900 antialiased font-body min-h-screen flex flex-col">
 
-<!-- Top Navigation Bar -->
-<nav class="docked full-width top-0 shadow-sm bg-surface-container-lowest dark:bg-inverse-surface shadow-[0_10px_30px_rgba(0,0,0,0.04)] hidden md:block border-b border-surface-container-low">
-    <div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
-        <div class="text-headline-md font-headline-md font-extrabold tracking-tighter text-primary flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary-green text-3xl">sports_score</span>
-            AERIS
-        </div>
-        <div class="flex gap-stack-md font-body-md text-body-md">
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="index.html">Dashboard</a>
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="reports.html">Reports</a>
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="history.html">Progress</a>
-            <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-colors duration-200" href="settings.html">Settings</a>
-        </div>
-        <div class="flex items-center gap-3">
-            <button id="userProfileBtn" title="View Profile" class="flex items-center justify-center p-0.5 rounded-full border-2 border-primary-green/30 hover:border-primary-green transition-all cursor-pointer shadow-xs hover:scale-105">
-                <img id="userNavAvatar" alt="Athlete Profile Avatar" class="w-8 h-8 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtv09NYosvrJzaXK9Y7vkNm3kjFxn42xJzB565_VF6lvgVKJHKFmYLdxp-AuH7AwmLLMZPFouYasppm359lZmeRU4DjqmoK3TGA8ziCkL8VbCSdc4LMicxe0fKDT5wgxXugwS0fqaov2X8BH5u9HURMVKOJPpN6i-p8Y6L62nLLw7ku-HEqU_Kj-w2pSsbeB7DZmnw7ueAzcq1blrY9p4SYnUiR4g6IHlTLfteM2awdXmIpTT_9twt6A"/>
-            </button>
-        </div>
+  <!-- Top Navigation Bar -->
+  <nav class="fixed top-0 w-full z-50 h-[84px] bg-[#fafbfa]/95 backdrop-blur-md border-b border-slate-200 flex justify-between items-center px-6 md:px-10 shadow-sm">
+    <div class="flex items-center gap-3 md:gap-6">
+      <button id="aeris-menu-toggle" aria-label="Toggle Menu" class="p-2 rounded-xl text-slate-700 hover:text-emerald-700 hover:bg-slate-100 transition-colors flex items-center justify-center cursor-pointer">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+      <a href="/index.html" class="flex items-center gap-3 py-1">
+        <img src="/logo.png" alt="AERIS Logo" class="h-14 md:h-16 w-auto object-contain max-h-16 transition-transform hover:scale-105">
+      </a>
     </div>
-</nav>
+  </nav>
 
-<!-- Main Settings Content -->
-<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg md:py-10">
-    <header class="mb-8">
-        <h1 class="font-display-hero text-3xl md:text-4xl font-extrabold text-primary-green tracking-tight">
-            Settings &amp; Preferences
+  <!-- Main Content Container -->
+  <main class="mt-[84px] p-6 md:p-10 flex-grow max-w-[1600px] w-full mx-auto pb-20">
+
+    <!-- Page Header -->
+    <header class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold font-headline text-slate-900 mb-1 flex items-center gap-2.5">
+          <span class="material-symbols-outlined text-emerald-600 text-3xl">settings</span>
+          System Settings & Kinematic Calibration
         </h1>
-        <p class="font-body-md text-on-surface-variant mt-1 max-w-2xl">
-            Manage your athletic profile, configure biometric AI processing, and secure your AERIS account credentials.
+        <p class="text-slate-600 text-sm">
+          Calibrate biomechanical sensitivity thresholds, notification alerts, and AI vision engine options.
         </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+          System Active • Synced
+        </span>
+      </div>
     </header>
 
-    <!-- Alert Banner -->
-    <div id="settingsAlert" class="hidden p-4 rounded-xl text-xs font-bold mb-6 bg-emerald-50 border border-emerald-200 text-emerald-900"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Left Column: Athlete Profile & Account Security -->
-        <div class="lg:col-span-7 space-y-6">
-            
-            <!-- Athlete Profile Section -->
-            <section class="glass-card rounded-xl p-8 border border-surface-container-low hover-lift">
-                <h3 class="font-headline-md text-xl font-bold text-on-surface mb-6 border-b border-surface-container-low pb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary-green">person</span>
-                    Athlete Profile
-                </h3>
+      <!-- Left Column: Settings Navigation & Profile Card (4 Cols) -->
+      <div class="lg:col-span-4 flex flex-col gap-6">
 
-                <div class="flex flex-col sm:flex-row gap-6 items-start mb-6">
-                    <div class="relative group shrink-0 cursor-pointer" id="settingsAvatarTrigger" title="Click to change profile picture">
-                        <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-accent-soft bg-surface-container flex items-center justify-center relative">
-                            <img id="settingsAvatar" alt="Profile Picture" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtv09NYosvrJzaXK9Y7vkNm3kjFxn42xJzB565_VF6lvgVKJHKFmYLdxp-AuH7AwmLLMZPFouYasppm359lZmeRU4DjqmoK3TGA8ziCkL8VbCSdc4LMicxe0fKDT5wgxXugwS0fqaov2X8BH5u9HURMVKOJPpN6i-p8Y6L62nLLw7ku-HEqU_Kj-w2pSsbeB7DZmnw7ueAzcq1blrY9p4SYnUiR4g6IHlTLfteM2awdXmIpTT_9twt6A"/>
-                        </div>
-                        <div class="absolute inset-0 bg-black/40 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span class="material-symbols-outlined text-white text-xl">photo_camera</span>
-                            <span class="text-white text-[9px] font-bold mt-0.5">Change Photo</span>
-                        </div>
-                        <input type="file" id="settingsAvatarInput" accept="image/*" class="hidden" />
-                    </div>
+        <!-- User Summary Card with Link to Profile -->
+        <div class="aeris-card p-6 flex flex-col items-center text-center">
+          <a href="/profile.html" title="View Profile" class="group flex flex-col items-center">
+            <div class="w-20 h-20 rounded-full bg-emerald-600 text-white text-2xl font-extrabold font-headline flex items-center justify-center mb-3 shadow-lg border-4 border-emerald-100 user-display-avatar group-hover:scale-105 transition-transform">
+              AM
+            </div>
+            <h2 class="font-headline font-extrabold text-slate-900 text-lg user-display-name group-hover:text-emerald-600 transition-colors">Alex Morgan</h2>
+          </a>
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5" id="profile-sport-position">
+            Track & Field / Basketball • Point Guard
+          </p>
 
-                    <div class="flex-1 w-full space-y-4 text-xs">
-                        <div>
-                            <label class="block font-bold text-on-surface mb-1">Full Name</label>
-                            <input id="settingFullName" class="w-full bg-surface border border-outline-variant rounded-lg py-2.5 px-4 text-on-surface focus:ring-2 focus:ring-primary-green focus:outline-none" type="text" value="Athlete Name"/>
-                        </div>
-                        <div>
-                            <label class="block font-bold text-on-surface mb-1">Athletic Title</label>
-                            <input id="settingTitle" class="w-full bg-surface border border-outline-variant rounded-lg py-2.5 px-4 text-on-surface focus:ring-2 focus:ring-primary-green focus:outline-none" type="text" value="Pro Sprinter / Track Athlete"/>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-xs">
-                    <label class="block font-bold text-on-surface mb-1">Bio / Training Focus Area</label>
-                    <textarea id="settingBio" class="w-full bg-surface border border-outline-variant rounded-lg py-2.5 px-4 text-on-surface focus:ring-2 focus:ring-primary-green focus:outline-none resize-none" rows="3">Specializing in 100m sprint acceleration mechanics and landing deceleration risk reduction using MediaPipe 33-landmark biomechanical tracking.</textarea>
-                </div>
-
-                <div class="mt-6 flex justify-end">
-                    <button id="saveProfileBtn" class="bg-primary-green hover:bg-tertiary-container text-white py-2.5 px-6 rounded-full font-bold text-xs transition-all shadow-sm">
-                        Save Profile Changes
-                    </button>
-                </div>
-            </section>
-
-            <!-- Account Security Section -->
-            <section class="glass-card rounded-xl p-8 border border-surface-container-low">
-                <h3 class="font-headline-md text-xl font-bold text-on-surface mb-6 border-b border-surface-container-low pb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary-green">security</span>
-                    Account Security (SQLite Auth)
-                </h3>
-
-                <div class="space-y-4 text-xs">
-                    <div class="flex items-center justify-between p-4 rounded-lg bg-surface border border-surface-container-low">
-                        <div>
-                            <h4 class="font-bold text-on-surface">Password Encryption</h4>
-                            <p class="text-outline mt-0.5 font-mono">PBKDF2-HMAC-SHA256 (Salted)</p>
-                        </div>
-                        <button class="text-primary-green font-bold hover:underline">Update Password</button>
-                    </div>
-
-                    <div class="flex items-center justify-between p-4 rounded-lg bg-surface border border-surface-container-low">
-                        <div>
-                            <h4 class="font-bold text-on-surface">Two-Factor Authentication</h4>
-                            <p class="text-outline mt-0.5">Add an extra layer of security to your AERIS account.</p>
-                        </div>
-                        <input class="w-5 h-5 rounded text-primary-green focus:ring-primary-green accent-primary-green cursor-pointer" type="checkbox"/>
-                    </div>
-                </div>
-            </section>
+          <a href="/profile.html" class="mt-4 text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1.5 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-full transition-all">
+            <span class="material-symbols-outlined text-base">person</span>
+            View Athlete Profile
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
         </div>
 
-        <!-- Right Column: AI Processing & Notifications -->
-        <div class="lg:col-span-5 space-y-6">
-            
-            <!-- AI Processing Preferences Section -->
-            <section class="glass-card rounded-xl p-8 border border-surface-container-low">
-                <h3 class="font-headline-md text-xl font-bold text-on-surface mb-4 border-b border-surface-container-low pb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary-green">memory</span>
-                    AI Processing Preferences
-                </h3>
+        <!-- Vertical Settings Category Selector -->
+        <div class="aeris-card p-2 space-y-1">
+          <button onclick="switchSettingsTab('baselines')" id="nav-btn-baselines" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-emerald-600 text-white shadow-sm text-left">
+            <span class="material-symbols-outlined text-xl">tune</span>
+            Kinematic Baselines & Sensitivity
+          </button>
 
-                <p class="text-xs text-on-surface-variant mb-6">
-                    Configure how the AERIS engine analyzes your biometric data during video inspections.
-                </p>
+          <button onclick="switchSettingsTab('alerts')" id="nav-btn-alerts" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all text-left">
+            <span class="material-symbols-outlined text-xl">notifications</span>
+            Alerts & Notifications
+          </button>
 
-                <div class="space-y-4 text-xs">
-                    <div class="p-4 rounded-xl border border-surface-container-low bg-surface flex items-start justify-between">
-                        <div class="pr-3">
-                            <h4 class="font-bold text-on-surface">Real-time Landmark Tracking</h4>
-                            <p class="text-outline mt-1 leading-relaxed">Tracks 33 key body landmarks continuously during motion capture.</p>
-                        </div>
-                        <input checked="" class="w-5 h-5 accent-primary-green cursor-pointer shrink-0 mt-1" type="checkbox"/>
-                    </div>
-
-                    <div class="p-4 rounded-xl border border-surface-container-low bg-surface flex items-start justify-between">
-                        <div class="pr-3">
-                            <h4 class="font-bold text-on-surface">Advanced Biomechanical Metrics</h4>
-                            <p class="text-outline mt-1 leading-relaxed">Calculates knee valgus, trunk lean, joint angles, and COM stability.</p>
-                        </div>
-                        <input checked="" class="w-5 h-5 accent-primary-green cursor-pointer shrink-0 mt-1" type="checkbox"/>
-                    </div>
-
-                    <div class="p-4 rounded-xl border border-surface-container-low bg-surface flex items-start justify-between">
-                        <div class="pr-3">
-                            <h4 class="font-bold text-on-surface">Groq AI LLM Recommendations</h4>
-                            <p class="text-outline mt-1 leading-relaxed">Generates athlete-specific advice via Meta Llama 3.3 70B Versatile model.</p>
-                        </div>
-                        <input checked="" class="w-5 h-5 accent-primary-green cursor-pointer shrink-0 mt-1" type="checkbox"/>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Notifications Section -->
-            <section class="glass-card rounded-xl p-8 border border-surface-container-low">
-                <h3 class="font-headline-md text-xl font-bold text-on-surface mb-4 border-b border-surface-container-low pb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary-green">notifications</span>
-                    Notification Alerts
-                </h3>
-
-                <div class="space-y-3 text-xs">
-                    <label class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-surface border border-transparent hover:border-surface-container-low cursor-pointer transition-all">
-                        <input checked="" class="w-4 h-4 accent-primary-green" type="checkbox"/>
-                        <span class="font-medium text-on-surface">Analysis Completion Alerts</span>
-                    </label>
-
-                    <label class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-surface border border-transparent hover:border-surface-container-low cursor-pointer transition-all">
-                        <input checked="" class="w-4 h-4 accent-primary-green" type="checkbox"/>
-                        <span class="font-medium text-on-surface">Weekly Performance Summaries</span>
-                    </label>
-
-                    <label class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-surface border border-transparent hover:border-surface-container-low cursor-pointer transition-all">
-                        <input class="w-4 h-4 accent-primary-green" type="checkbox"/>
-                        <span class="font-medium text-on-surface">High Ergonomic Risk Alerts</span>
-                    </label>
-                </div>
-            </section>
-
+          <button onclick="switchSettingsTab('ai-engine')" id="nav-btn-ai-engine" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all text-left">
+            <span class="material-symbols-outlined text-xl">psychology</span>
+            AI Engine & Vision Target
+          </button>
         </div>
+
+      </div>
+
+      <!-- Right Column: Settings Content Panels (8 Cols) -->
+      <div class="lg:col-span-8">
+
+        <!-- TAB 1: Kinematic Baselines & Sensitivity -->
+        <div id="tab-content-baselines" class="aeris-card p-6">
+          <div class="border-b border-slate-200 pb-4 mb-6">
+            <h2 class="font-headline font-extrabold text-slate-900 text-lg flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-600">tune</span>
+              Kinematic Baselines & Risk Tolerances
+            </h2>
+            <p class="text-xs text-slate-500">Set threshold percentages for trigger warnings during video keypoint extraction.</p>
+          </div>
+
+          <form onsubmit="handleBaselineSubmit(event)" class="space-y-6">
+            
+            <!-- Knee Stress Threshold Slider -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-slate-800 uppercase tracking-wider">Knee Stress Threshold (Valgus Angle)</span>
+                <span class="font-mono text-emerald-700 font-bold text-sm" id="val-knee">24.5%</span>
+              </div>
+              <input type="range" id="range-knee" min="10" max="50" step="0.5" value="24.5" oninput="document.getElementById('val-knee').textContent = parseFloat(this.value).toFixed(1) + '%'" class="w-full accent-emerald-600">
+              <p class="text-[11px] text-slate-500">Triggers ACL stress warnings when lateral knee displacement exceeds this threshold.</p>
+            </div>
+
+            <!-- Spine Flexion Threshold Slider -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-slate-800 uppercase tracking-wider">Lumbar Flexion Limit</span>
+                <span class="font-mono text-emerald-700 font-bold text-sm" id="val-spine">18.2%</span>
+              </div>
+              <input type="range" id="range-spine" min="5" max="40" step="0.5" value="18.2" oninput="document.getElementById('val-spine').textContent = parseFloat(this.value).toFixed(1) + '%'" class="w-full accent-emerald-600">
+              <p class="text-[11px] text-slate-500">Monitors excessive forward torso lean during deceleration & jump landings.</p>
+            </div>
+
+            <!-- Hip Asymmetry Slider -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-slate-800 uppercase tracking-wider">Hip Symmetry Baseline</span>
+                <span class="font-mono text-emerald-700 font-bold text-sm" id="val-hip">15.0%</span>
+              </div>
+              <input type="range" id="range-hip" min="5" max="35" step="0.5" value="15.0" oninput="document.getElementById('val-hip').textContent = parseFloat(this.value).toFixed(1) + '%'" class="w-full accent-emerald-600">
+              <p class="text-[11px] text-slate-500">Flags pelvis tilt and unilateral weight bearing discrepancies.</p>
+            </div>
+
+            <!-- Fatigue Index Limit Slider -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="font-bold text-slate-800 uppercase tracking-wider">Fatigue Accumulation Limit</span>
+                <span class="font-mono text-emerald-700 font-bold text-sm" id="val-fatigue">20.0%</span>
+              </div>
+              <input type="range" id="range-fatigue" min="10" max="40" step="0.5" value="20.0" oninput="document.getElementById('val-fatigue').textContent = parseFloat(this.value).toFixed(1) + '%'" class="w-full accent-emerald-600">
+              <p class="text-[11px] text-slate-500">Defines maximum allowable fatigue accumulation over consecutive training sets.</p>
+            </div>
+
+            <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
+              <button type="button" onclick="loadSettingsData()" class="btn-secondary py-2.5 px-6 text-xs rounded-full">Reset Defaults</button>
+              <button type="submit" class="btn-primary py-2.5 px-6 text-xs rounded-full">Update Baselines</button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- TAB 2: Alerts & Notifications -->
+        <div id="tab-content-alerts" class="aeris-card p-6 hidden">
+          <div class="border-b border-slate-200 pb-4 mb-6">
+            <h2 class="font-headline font-extrabold text-slate-900 text-lg flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-600">notifications</span>
+              Alerts & Notifications Config
+            </h2>
+            <p class="text-xs text-slate-500">Configure real-time sound cues, email summaries, and fatigue alerts.</p>
+          </div>
+
+          <div class="space-y-4">
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+              <div>
+                <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Audio Cues on High-Risk Mechanics</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Play instant chime during live video processing if knee valgus exceeds 20°.</div>
+              </div>
+              <input type="checkbox" checked class="w-5 h-5 accent-emerald-600 rounded cursor-pointer">
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+              <div>
+                <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Email Biomechanical Report Digests</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Receive PDF summaries after completing movement assessments.</div>
+              </div>
+              <input type="checkbox" checked class="w-5 h-5 accent-emerald-600 rounded cursor-pointer">
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+              <div>
+                <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Fatigue Spike Push Notifications</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Alert strength coaches when weekly fatigue index increases by &gt; 15%.</div>
+              </div>
+              <input type="checkbox" checked class="w-5 h-5 accent-emerald-600 rounded cursor-pointer">
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-200 flex justify-end">
+            <button onclick="showToast('Notification preferences saved!', 'success')" class="btn-primary py-2.5 px-6 text-xs rounded-full">Save Notification Preferences</button>
+          </div>
+        </div>
+
+        <!-- TAB 3: AI Engine & System Preferences -->
+        <div id="tab-content-ai-engine" class="aeris-card p-6 hidden">
+          <div class="border-b border-slate-200 pb-4 mb-6">
+            <h2 class="font-headline font-extrabold text-slate-900 text-lg flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-600">psychology</span>
+              AI Physical Therapy Engine & Pose Target
+            </h2>
+            <p class="text-xs text-slate-500">Configure LLM recommendations model and MediaPipe landmark target frame rates.</p>
+          </div>
+
+          <div class="space-y-6">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Groq LLM Physical Therapy Engine</label>
+              <select class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500">
+                <option value="llama-3.3-70b" selected>Groq LLaMA-3.3-70B Versatile (Recommended • High Clinical Precision)</option>
+                <option value="llama-3.1-8b">Groq LLaMA-3.1-8B Instant (Ultra-Fast Response)</option>
+                <option value="native-rules">AERIS Native Kinematic Heuristic Rules</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">MediaPipe 33-Landmark Pose AI FPS</label>
+              <select class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500">
+                <option value="60" selected>60 FPS (Ultra Smooth • Maximum Kinematic Accuracy)</option>
+                <option value="30">30 FPS (Standard Balance)</option>
+                <option value="15">15 FPS (Low Memory & Battery Saver Mode)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Landmark Keypoint Confidence Threshold</label>
+              <select class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 font-medium focus:outline-none focus:border-emerald-500">
+                <option value="0.50">0.50 (Standard Noise Filtering)</option>
+                <option value="0.70" selected>0.70 (Strict Landmark Validation)</option>
+                <option value="0.85">0.85 (Ultra-Strict Markerless Validation)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-slate-200 flex justify-end">
+            <button onclick="showToast('AI Engine preferences saved!', 'success')" class="btn-primary py-2.5 px-6 text-xs rounded-full">Save AI Preferences</button>
+          </div>
+        </div>
+
+      </div>
 
     </div>
-</main>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        initUserProfile();
+  </main>
 
-        const saveBtn = document.getElementById('saveProfileBtn');
-        if (saveBtn) {
-            saveBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const alert = document.getElementById('settingsAlert');
-                const fullNameVal = document.getElementById('settingFullName')?.value;
+  <script src="/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", loadSettingsData);
 
-                if (fullNameVal) {
-                    const userStr = localStorage.getItem('aeris_user');
-                    if (userStr) {
-                        try {
-                            const user = JSON.parse(userStr);
-                            user.full_name = fullNameVal;
-                            localStorage.setItem('aeris_user', JSON.stringify(user));
-                            const pNameEl = document.getElementById('userProfileName');
-                            if (pNameEl) pNameEl.textContent = fullNameVal;
-                        } catch (err) {}
-                    }
-                }
-
-                if (alert) {
-                    alert.textContent = 'Settings and profile changes saved successfully!';
-                    alert.classList.remove('hidden');
-                    setTimeout(() => alert.classList.add('hidden'), 3000);
-                }
-            });
+    function switchSettingsTab(tab) {
+      const tabs = ['baselines', 'alerts', 'ai-engine'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`nav-btn-${t}`);
+        const content = document.getElementById(`tab-content-${t}`);
+        if (t === tab) {
+          btn.className = "w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-emerald-600 text-white shadow-sm text-left";
+          content.classList.remove("hidden");
+        } else {
+          btn.className = "w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all text-left";
+          content.classList.add("hidden");
         }
-
-        // Change avatar handler
-        const avatarTrigger = document.getElementById('settingsAvatarTrigger');
-        const avatarInput = document.getElementById('settingsAvatarInput');
-        if (avatarTrigger && avatarInput) {
-            avatarTrigger.addEventListener('click', () => avatarInput.click());
-            avatarInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (evt) => {
-                        const dataUrl = evt.target.result;
-                        const settingsAvatar = document.getElementById('settingsAvatar');
-                        const navAvatar = document.getElementById('userNavAvatar');
-                        if (settingsAvatar) settingsAvatar.src = dataUrl;
-                        if (navAvatar) navAvatar.src = dataUrl;
-                        localStorage.setItem('aeris_avatar', dataUrl);
-                        const userStr = localStorage.getItem('aeris_user');
-                        if (userStr) {
-                            try {
-                                const user = JSON.parse(userStr);
-                                user.avatar_url = dataUrl;
-                                localStorage.setItem('aeris_user', JSON.stringify(user));
-                            } catch(err) {}
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-    });
-
-    function initUserProfile() {
-        const userStr = localStorage.getItem('aeris_user');
-        const customAvatar = localStorage.getItem('aeris_avatar');
-        const navAvatarEl = document.getElementById('userNavAvatar');
-        const settingsAvatar = document.getElementById('settingsAvatar');
-        const settingNameInput = document.getElementById('settingFullName');
-        const profileBtn = document.getElementById('userProfileBtn');
-
-        if (customAvatar) {
-            if (navAvatarEl) navAvatarEl.src = customAvatar;
-            if (settingsAvatar) settingsAvatar.src = customAvatar;
-        }
-
-        if (userStr) {
-            try {
-                const user = JSON.parse(userStr);
-                if (user.full_name && settingNameInput) settingNameInput.value = user.full_name;
-                if (!customAvatar && user.avatar_url) {
-                    if (navAvatarEl) navAvatarEl.src = user.avatar_url;
-                    if (settingsAvatar) settingsAvatar.src = user.avatar_url;
-                }
-            } catch (e) {}
-        }
-        if (profileBtn) {
-            profileBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.location.href = 'profile.html';
-            });
-        }
+      });
     }
-</script>
 
+    async function loadSettingsData() {
+      try {
+        const user = await apiRequest("/api/user/profile", "GET");
+        document.getElementById("profile-sport-position").textContent = `${user.sport || 'Track'} • ${user.position || 'Athlete'}`;
+
+        const baseKnee = user.baseline_knee || 24.5;
+        const baseSpine = user.baseline_spine || 18.2;
+        const baseHip = user.baseline_hip || 15.0;
+        const baseFatigue = user.baseline_fatigue || 20.0;
+
+        document.getElementById("range-knee").value = baseKnee;
+        document.getElementById("val-knee").textContent = baseKnee.toFixed(1) + "%";
+
+        document.getElementById("range-spine").value = baseSpine;
+        document.getElementById("val-spine").textContent = baseSpine.toFixed(1) + "%";
+
+        document.getElementById("range-hip").value = baseHip;
+        document.getElementById("val-hip").textContent = baseHip.toFixed(1) + "%";
+
+        document.getElementById("range-fatigue").value = baseFatigue;
+        document.getElementById("val-fatigue").textContent = baseFatigue.toFixed(1) + "%";
+
+      } catch (err) {
+        showToast("Error loading settings: " + err.message, "error");
+      }
+    }
+
+    async function handleBaselineSubmit(e) {
+      e.preventDefault();
+      const payload = {
+        baseline_knee: parseFloat(document.getElementById("range-knee").value),
+        baseline_spine: parseFloat(document.getElementById("range-spine").value),
+        baseline_hip: parseFloat(document.getElementById("range-hip").value),
+        baseline_fatigue: parseFloat(document.getElementById("range-fatigue").value)
+      };
+
+      try {
+        const updated = await apiRequest("/api/user/profile", "PUT", payload);
+        setAuthToken(getAuthToken(), updated);
+        showToast("Kinematic baselines calibrated and saved!", "success");
+        loadSettingsData();
+      } catch (err) {
+        showToast("Failed to calibrate baselines: " + err.message, "error");
+      }
+    }
+  </script>
 </body>
 </html>

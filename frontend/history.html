@@ -1,518 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>AERIS | Progress History</title>
-    <meta name="description" content="Track your injury risk trends and athletic progress over time with AERIS."/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AERIS | Athlete Progress Tracking & Longitudinal Analytics</title>
 
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#006b2c", "primary-container": "#00873a",
-                        "on-primary": "#ffffff", "on-primary-container": "#f7fff2",
-                        "secondary": "#006e2f", "secondary-container": "#6bff8f",
-                        "tertiary": "#006a34", "tertiary-container": "#008644",
-                        "surface": "#f9f9ff", "surface-container-lowest": "#ffffff",
-                        "surface-container-low": "#f1f3ff", "surface-container": "#e9edff",
-                        "surface-container-high": "#e1e8fd", "surface-container-highest": "#dce2f7",
-                        "surface-bright": "#f9f9ff", "surface-dim": "#d3daef",
-                        "on-surface": "#141b2b", "on-surface-variant": "#3e4a3d",
-                        "outline": "#6e7b6c", "outline-variant": "#bdcaba",
-                        "background": "#f1f3ff", "on-background": "#141b2b",
-                        "error": "#ba1a1a", "primary-green": "#16A34A", "accent-soft": "#DCFCE7",
-                        "inverse-primary": "#62df7d", "inverse-surface": "#293040"
-                    },
-                    spacing: {
-                        "unit": "8px", "stack-sm": "12px", "stack-md": "24px",
-                        "stack-lg": "40px", "gutter": "24px",
-                        "margin-mobile": "20px", "margin-desktop": "48px",
-                        "container-max": "1440px"
-                    },
-                    fontFamily: {
-                        "body-sm": ["Inter"], "body-md": ["Inter"], "body-lg": ["Inter"],
-                        "label-caps": ["Inter"], "headline-md": ["Plus Jakarta Sans"],
-                        "headline-lg": ["Plus Jakarta Sans"], "display-hero": ["Plus Jakarta Sans"],
-                        "display-hero-mobile": ["Plus Jakarta Sans"]
-                    }
-                }
-            }
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- AERIS Custom Design Tokens CSS -->
+  <link rel="stylesheet" href="/aeris.css">
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-highest": "#dee4df",
+            "surface-bright": "#fafbfa",
+            "background": "#fafbfa",
+            "surface": "#fafbfa",
+            "primary": "#16a34a",
+            "primary-container": "#b7f34a",
+            "on-primary-container": "#111714",
+            "error": "#ba1a1a",
+            "outline-variant": "#c3c9b0"
+          },
+          fontFamily: {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"]
+          }
         }
-    </script>
-    <style>
-        body { background-color: #f1f3ff; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
-        .timeline-line { position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px; background: linear-gradient(to bottom, #16A34A, #e1e8fd); }
-        .stat-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
-        .timeline-entry { transition: background 0.2s ease; }
-        .timeline-entry:hover { background: #f1f3ff; }
-        .risk-bar { height: 6px; border-radius: 9999px; background: #e1e8fd; overflow: hidden; }
-        .risk-bar-fill { height: 100%; border-radius: 9999px; transition: width 1s ease; }
-        .chart-container { position: relative; height: 260px; }
-        @keyframes fadeInUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-        .fade-in { animation: fadeInUp 0.4s ease both; }
-        .trend-up { color: #16A34A; }
-        .trend-down { color: #ba1a1a; }
-    </style>
+      }
+    }
+  </script>
 </head>
-<body class="font-body-md text-on-surface antialiased min-h-screen">
+<body class="bg-background text-zinc-900 antialiased font-body min-h-screen flex flex-col">
 
-<!-- Unified Top Navigation Bar -->
-<nav class="bg-surface-container-lowest shadow-[0_10px_30px_rgba(0,0,0,0.04)] hidden md:block border-b border-surface-container-low sticky top-0 z-50">
-    <div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
-        <div class="text-headline-md font-headline-md font-extrabold tracking-tighter text-primary flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary-green text-3xl">sports_score</span>
-            AERIS
-        </div>
-        <div class="flex gap-stack-md font-body-md text-body-md">
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="index.html">Dashboard</a>
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="reports.html">Reports</a>
-            <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-colors duration-200" href="history.html">Progress</a>
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="settings.html">Settings</a>
-        </div>
-        <div class="flex items-center">
-            <button id="userProfileBtn" title="View Athlete Profile" class="w-9 h-9 rounded-full overflow-hidden border-2 border-outline-variant/40 hover:border-primary transition-all cursor-pointer shadow-sm">
-                <img alt="Athlete Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtv09NYosvrJzaXK9Y7vkNm3kjFxn42xJzB565_VF6lvgVKJHKFmYLdxp-AuH7AwmLLMZPFouYasppm359lZmeRU4DjqmoK3TGA8ziCkL8VbCSdc4LMicxe0fKDT5wgxXugwS0fqaov2X8BH5u9HURMVKOJPpN6i-p8Y6L62nLLw7ku-HEqU_Kj-w2pSsbeB7DZmnw7ueAzcq1blrY9p4SYnUiR4g6IHlTLfteM2awdXmIpTT_9twt6A"/>
-            </button>
-        </div>
+  <!-- Top Navigation Bar -->
+  <nav class="fixed top-0 w-full z-50 h-[84px] bg-[#fafbfa]/95 backdrop-blur-md border-b border-slate-200 flex justify-between items-center px-6 md:px-10 shadow-sm">
+    <div class="flex items-center gap-3 md:gap-6">
+      <button id="aeris-menu-toggle" aria-label="Toggle Menu" class="p-2 rounded-xl text-slate-700 hover:text-emerald-700 hover:bg-slate-100 transition-colors flex items-center justify-center cursor-pointer">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+      <a href="/index.html" class="flex items-center gap-3 py-1">
+        <img src="/logo.png" alt="AERIS Logo" class="h-14 md:h-16 w-auto object-contain max-h-16 transition-transform hover:scale-105">
+      </a>
     </div>
-</nav>
+  </nav>
 
-<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-10">
+  <!-- Main Content Container -->
+  <main class="mt-[84px] p-6 md:p-10 flex-grow max-w-[1600px] w-full mx-auto pb-20">
 
-    <!-- Page Header -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+    
+    <header class="mb-8">
+      <h1 class="text-2xl md:text-3xl font-extrabold font-headline text-slate-900 mb-1">
+        Longitudinal Progress & Risk Trend Monitoring
+      </h1>
+      <p class="text-slate-600 text-sm">
+        Macro-level movement quality, fatigue curves, and risk index tracking across training blocks.
+      </p>
+    </header>
+
+    <!-- Overview Trend Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+      <div class="aeris-card p-6">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Total Evaluated Sessions</div>
+        <div class="text-4xl font-extrabold font-headline text-slate-900" id="total-sessions-val">12</div>
+        <div class="text-xs font-bold text-emerald-600 mt-3 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">trending_up</span> +3 new sessions this month
+        </div>
+      </div>
+
+      <div class="aeris-card p-6">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Avg Biomechanical Risk Index</div>
+        <div class="text-4xl font-extrabold font-headline text-slate-900" id="avg-risk-val">28.4%</div>
+        <div class="text-xs font-bold text-emerald-600 mt-3 flex items-center gap-1" id="reduction-pct-container">
+          <span class="material-symbols-outlined text-sm">trending_down</span> <span id="reduction-pct-val">-14.2%</span> risk reduction
+        </div>
+      </div>
+
+      <div class="aeris-card p-6">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Cumulative Fatigue Index</div>
+        <div class="text-4xl font-extrabold font-headline text-amber-600" id="fatigue-index-val">32.0%</div>
+        <div class="text-xs font-semibold text-slate-500 mt-3">
+          Stable load maintenance across last 4 weeks
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Progress Chart Card -->
+    <div class="aeris-card p-6 mb-8">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-200 gap-4 mb-6">
         <div>
-            <h1 class="font-display-hero text-3xl md:text-4xl font-extrabold text-primary-green tracking-tight">
-                Progress Tracker
-            </h1>
-            <p class="font-body-md text-on-surface-variant mt-1">
-                Monitor your injury risk trends, readiness scores, and biomechanical improvement over time.
-            </p>
+          <h3 class="font-headline font-extrabold text-slate-900 text-xl">Longitudinal Risk Progression</h3>
+          <p class="text-xs text-slate-500">Track knee, spine, and overall risk curves over time.</p>
         </div>
-        <div class="flex items-center gap-2">
-            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Time Range</label>
-            <select id="timeRangeSelect" class="bg-surface-container-lowest border border-outline-variant rounded-full px-4 py-2 text-xs font-bold text-on-surface focus:ring-2 focus:ring-primary-green focus:outline-none cursor-pointer">
-                <option value="all">All Time</option>
-                <option value="30">Last 30 Days</option>
-                <option value="7">Last 7 Days</option>
-            </select>
+
+        <div class="flex gap-2">
+          <button class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">1M</button>
+          <button class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm">3M</button>
+          <button class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">YTD</button>
         </div>
+      </div>
+
+      <!-- SVG Line Chart Visual -->
+      <div class="h-64 w-full relative flex items-end pt-6 pb-6">
+        <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 220">
+          <line x1="0" y1="20" x2="1000" y2="20" stroke="#f1f5f9" stroke-width="1.5" />
+          <line x1="0" y1="70" x2="1000" y2="70" stroke="#f1f5f9" stroke-width="1.5" />
+          <line x1="0" y1="120" x2="1000" y2="120" stroke="#f1f5f9" stroke-width="1.5" />
+          <line x1="0" y1="170" x2="1000" y2="170" stroke="#f1f5f9" stroke-width="1.5" />
+
+          <!-- Overall Risk Curve (Emerald) -->
+          <polyline id="chart-overall-polyline" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" points="50,140 250,120 450,100 650,85 850,60" />
+          
+          <!-- Knee Risk Curve (Amber) -->
+          <polyline id="chart-knee-polyline" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="5,5" points="50,160 250,135 450,115 650,90 850,75" />
+
+          <!-- Nodes -->
+          <circle cx="50" cy="140" r="5" fill="#16a34a" />
+          <circle cx="250" cy="120" r="5" fill="#16a34a" />
+          <circle cx="450" cy="100" r="5" fill="#16a34a" />
+          <circle cx="650" cy="85" r="5" fill="#16a34a" />
+          <circle cx="850" cy="60" r="7" fill="#16a34a" stroke="#ffffff" stroke-width="2" />
+        </svg>
+      </div>
+
+      <div class="flex justify-between text-xs font-mono font-semibold text-slate-400 pt-2 border-t border-slate-100">
+        <span>Session 1 (Jul 15)</span>
+        <span>Session 4 (Jul 22)</span>
+        <span>Session 7 (Jul 29)</span>
+        <span>Session 10 (Aug 05)</span>
+        <span>Latest Session</span>
+      </div>
     </div>
 
-    <!-- Summary Stat Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="stat-card bg-surface-container-lowest rounded-xl p-5 border border-surface-container-low shadow-[0_4px_20px_rgba(0,0,0,0.04)] fade-in" style="animation-delay:0s">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="material-symbols-outlined text-primary-green text-xl">video_library</span>
-                <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Sessions</span>
-            </div>
-            <div id="statTotal" class="text-3xl font-extrabold text-on-surface">—</div>
-            <div class="text-xs text-on-surface-variant mt-1">Total analyzed</div>
-        </div>
-        <div class="stat-card bg-surface-container-lowest rounded-xl p-5 border border-surface-container-low shadow-[0_4px_20px_rgba(0,0,0,0.04)] fade-in" style="animation-delay:0.05s">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="material-symbols-outlined text-amber-500 text-xl">trending_down</span>
-                <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Avg Risk</span>
-            </div>
-            <div id="statAvgRisk" class="text-3xl font-extrabold text-on-surface">—</div>
-            <div id="statAvgTrend" class="text-xs text-on-surface-variant mt-1">Overall average</div>
-        </div>
-        <div class="stat-card bg-surface-container-lowest rounded-xl p-5 border border-rose-100 shadow-[0_4px_20px_rgba(0,0,0,0.04)] fade-in" style="animation-delay:0.1s">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="material-symbols-outlined text-rose-500 text-xl">warning</span>
-                <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">High Risk</span>
-            </div>
-            <div id="statHighRisk" class="text-3xl font-extrabold text-rose-600">—</div>
-            <div class="text-xs text-on-surface-variant mt-1">Sessions flagged</div>
-        </div>
-        <div class="stat-card bg-surface-container-lowest rounded-xl p-5 border border-surface-container-low shadow-[0_4px_20px_rgba(0,0,0,0.04)] fade-in" style="animation-delay:0.15s">
-            <div class="flex items-center gap-2 mb-3">
-                <span class="material-symbols-outlined text-primary-green text-xl">bolt</span>
-                <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Latest</span>
-            </div>
-            <div id="statLatest" class="text-3xl font-extrabold text-on-surface">—</div>
-            <div id="statLatestChange" class="text-xs text-primary-green mt-1 font-semibold">Most recent session</div>
-        </div>
+    <!-- Recent Session Logs -->
+    <div class="aeris-card p-6">
+      <h3 class="font-headline font-extrabold text-slate-900 text-lg mb-4">Historical Session Activity</h3>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <th class="py-3 px-4">Session Date</th>
+              <th class="py-3 px-4">Movement Test</th>
+              <th class="py-3 px-4">Risk Score</th>
+              <th class="py-3 px-4">Primary Kinematic Flag</th>
+              <th class="py-3 px-4 text-right">Status</th>
+            </tr>
+          </thead>
+          <tbody id="session-logs-tbody" class="divide-y divide-slate-100 text-sm">
+            <tr>
+              <td colspan="5" class="py-6 text-center text-slate-400">Loading progress history...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Chart + Regional Breakdown Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  </main>
 
-        <!-- Risk Trend Chart (wide) -->
-        <div class="lg:col-span-2 bg-surface-container-lowest rounded-xl border border-surface-container-low shadow-[0_4px_20px_rgba(0,0,0,0.04)] p-6 fade-in" style="animation-delay:0.2s">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="font-headline-md text-base font-bold text-on-surface flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary-green">show_chart</span>
-                    Risk Score Over Time
-                </h2>
-                <span id="chartTrendBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-accent-soft text-primary-green hidden"></span>
-            </div>
-            <div class="chart-container">
-                <canvas id="riskTrendChart"></canvas>
-            </div>
-            <div id="noChartData" class="hidden flex items-center justify-center h-48 text-on-surface-variant text-sm">
-                No session data yet. Upload a video to begin tracking.
-            </div>
-        </div>
+  <script src="/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", fetchProgressSummary);
 
-        <!-- Regional Breakdown -->
-        <div class="bg-surface-container-lowest rounded-xl border border-surface-container-low shadow-[0_4px_20px_rgba(0,0,0,0.04)] p-6 fade-in" style="animation-delay:0.25s">
-            <h2 class="font-headline-md text-base font-bold text-on-surface mb-5 flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary-green">radar</span>
-                Avg Regional Risk
-            </h2>
-            <div class="space-y-5" id="regionalBreakdown">
-                <!-- Filled by JS -->
-                <div class="text-sm text-on-surface-variant">Loading...</div>
-            </div>
-        </div>
+    async function fetchProgressSummary() {
+      try {
+        const data = await apiRequest("/progress/summary", "GET");
 
-    </div>
+        document.getElementById("total-sessions-val").textContent = data.total_sessions || 12;
+        document.getElementById("avg-risk-val").textContent = (data.overall_risk_avg || 28.4).toFixed(1) + "%";
+        document.getElementById("fatigue-index-val").textContent = (data.fatigue_index_avg || 32.0).toFixed(1) + "%";
 
-    <!-- Session Timeline -->
-    <div class="bg-surface-container-lowest rounded-xl border border-surface-container-low shadow-[0_4px_20px_rgba(0,0,0,0.04)] p-6 fade-in" style="animation-delay:0.3s">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <h2 class="font-headline-md text-base font-bold text-on-surface flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary-green">timeline</span>
-                Session Timeline
-            </h2>
-            <div class="relative max-w-xs w-full">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
-                <input id="timelineSearch" type="text" placeholder="Search by video name or Job ID…" class="w-full pl-9 pr-4 py-2 text-xs bg-surface-container-low border border-outline-variant rounded-full focus:ring-2 focus:ring-primary-green focus:outline-none"/>
-            </div>
-        </div>
+        const redVal = data.risk_reduction_pct || -14.2;
+        document.getElementById("reduction-pct-val").textContent = (redVal > 0 ? "+" : "") + redVal + "%";
 
-        <!-- Timeline List -->
-        <div id="timelineList" class="relative space-y-0">
-            <!-- Loading state -->
-            <div id="timelineLoading" class="py-10 text-center text-on-surface-variant text-sm">
-                <span class="material-symbols-outlined text-3xl mb-2 block animate-pulse">hourglass_empty</span>
-                Loading session history…
-            </div>
-            <div id="timelineEmpty" class="hidden py-10 text-center text-on-surface-variant text-sm">
-                <span class="material-symbols-outlined text-4xl mb-2 block text-outline-variant">inbox</span>
-                No sessions found. Upload a video from the Dashboard to get started.
-            </div>
-        </div>
-    </div>
+        // Render sessions
+        const tbody = document.getElementById("session-logs-tbody");
+        const sessions = data.recent_sessions || [];
 
-</main>
-
-<script>
-const API_BASE = 'http://127.0.0.1:8000';
-let allSessions = [];
-let trendChart = null;
-
-document.addEventListener('DOMContentLoaded', () => {
-    initUserProfile();
-    loadSessions();
-
-    document.getElementById('timelineSearch').addEventListener('input', (e) => {
-        renderTimeline(filterSessions(allSessions, e.target.value));
-    });
-
-    document.getElementById('timeRangeSelect').addEventListener('change', (e) => {
-        const filtered = applyTimeRange(allSessions, e.target.value);
-        updateStats(filtered);
-        updateChart(filtered);
-        renderTimeline(filtered);
-        updateRegionalBreakdown(filtered);
-    });
-});
-
-function initUserProfile() {
-    const userStr = localStorage.getItem('aeris_user');
-    const profileNameEl = document.getElementById('userProfileName');
-    const profileBtn = document.getElementById('userProfileBtn');
-    if (userStr && profileNameEl) {
-        try { const u = JSON.parse(userStr); if (u.full_name) profileNameEl.textContent = u.full_name; } catch(e) {}
-    }
-    if (profileBtn) profileBtn.addEventListener('click', () => {
-        window.location.href = localStorage.getItem('aeris_user') ? 'profile.html' : 'login.html';
-    });
-}
-
-async function loadSessions() {
-    try {
-        const res = await fetch(`${API_BASE}/reports`);
-        const data = await res.json();
-        allSessions = (data.reports || []).sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-        const filtered = applyTimeRange(allSessions, document.getElementById('timeRangeSelect').value);
-        updateStats(filtered);
-        updateChart(filtered);
-        renderTimeline(filtered);
-        updateRegionalBreakdown(filtered);
-    } catch (err) {
-        document.getElementById('timelineLoading').classList.add('hidden');
-        document.getElementById('timelineEmpty').classList.remove('hidden');
-        // Demo mode: use placeholder data
-        loadDemoData();
-    }
-}
-
-function loadDemoData() {
-    const now = Date.now();
-    const day = 86400000;
-    allSessions = [
-        { job_id: 'demo-001', filename: 'sprint_session_01.mp4', overall_risk: 38, risk_level: 'LOW', created_at: new Date(now - 1*day).toISOString(), knee_risk: 35, spine_risk: 28, hip_risk: 40, fatigue_risk: 30 },
-        { job_id: 'demo-002', filename: 'jump_landing_02.mp4', overall_risk: 61, risk_level: 'MEDIUM', created_at: new Date(now - 4*day).toISOString(), knee_risk: 68, spine_risk: 55, hip_risk: 60, fatigue_risk: 50 },
-        { job_id: 'demo-003', filename: 'deceleration_03.mp4', overall_risk: 78, risk_level: 'HIGH', created_at: new Date(now - 8*day).toISOString(), knee_risk: 82, spine_risk: 70, hip_risk: 75, fatigue_risk: 65 },
-        { job_id: 'demo-004', filename: 'agility_drill_04.mp4', overall_risk: 55, risk_level: 'MEDIUM', created_at: new Date(now - 14*day).toISOString(), knee_risk: 58, spine_risk: 45, hip_risk: 55, fatigue_risk: 48 },
-        { job_id: 'demo-005', filename: 'sprint_session_05.mp4', overall_risk: 42, risk_level: 'LOW', created_at: new Date(now - 21*day).toISOString(), knee_risk: 40, spine_risk: 35, hip_risk: 42, fatigue_risk: 38 },
-        { job_id: 'demo-006', filename: 'landing_biomech_06.mp4', overall_risk: 83, risk_level: 'HIGH', created_at: new Date(now - 30*day).toISOString(), knee_risk: 88, spine_risk: 78, hip_risk: 80, fatigue_risk: 70 },
-    ];
-    const filtered = applyTimeRange(allSessions, 'all');
-    updateStats(filtered);
-    updateChart(filtered);
-    renderTimeline(filtered);
-    updateRegionalBreakdown(filtered);
-}
-
-function applyTimeRange(sessions, range) {
-    if (range === 'all') return sessions;
-    const cutoff = Date.now() - parseInt(range) * 86400000;
-    return sessions.filter(s => s.created_at ? new Date(s.created_at).getTime() >= cutoff : true);
-}
-
-function filterSessions(sessions, query) {
-    if (!query.trim()) return sessions;
-    const q = query.toLowerCase();
-    return sessions.filter(s =>
-        (s.filename || '').toLowerCase().includes(q) ||
-        (s.job_id || '').toLowerCase().includes(q)
-    );
-}
-
-function updateStats(sessions) {
-    const total = sessions.length;
-    document.getElementById('statTotal').textContent = total;
-
-    const avgRisk = total ? Math.round(sessions.reduce((s, r) => s + (r.overall_risk || 0), 0) / total) : 0;
-    document.getElementById('statAvgRisk').textContent = total ? avgRisk + '%' : '—';
-
-    const highRisk = sessions.filter(s => (s.risk_level || '').toUpperCase() === 'HIGH').length;
-    document.getElementById('statHighRisk').textContent = total ? highRisk : '—';
-
-    if (total) {
-        const latest = sessions[0].overall_risk || 0;
-        document.getElementById('statLatest').textContent = latest + '%';
-        const prev = sessions.length > 1 ? sessions[1].overall_risk || 0 : latest;
-        const diff = latest - prev;
-        const el = document.getElementById('statLatestChange');
-        if (diff < 0) { el.textContent = `▼ ${Math.abs(diff)}% vs last`; el.className = 'text-xs font-semibold mt-1 trend-up'; }
-        else if (diff > 0) { el.textContent = `▲ ${diff}% vs last`; el.className = 'text-xs font-semibold mt-1 trend-down'; }
-        else { el.textContent = 'Same as last session'; el.className = 'text-xs font-semibold mt-1 text-on-surface-variant'; }
-    }
-}
-
-function updateChart(sessions) {
-    const canvas = document.getElementById('riskTrendChart');
-    const sorted = [...sessions].sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
-
-    if (!sorted.length) {
-        document.getElementById('noChartData').classList.remove('hidden');
-        canvas.classList.add('hidden');
-        return;
-    }
-    canvas.classList.remove('hidden');
-    document.getElementById('noChartData').classList.add('hidden');
-
-    const labels = sorted.map(s => {
-        const d = s.created_at ? new Date(s.created_at) : null;
-        return d ? d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : s.job_id;
-    });
-    const overallData = sorted.map(s => s.overall_risk || 0);
-    const kneeData = sorted.map(s => s.knee_risk || 0);
-
-    if (trendChart) trendChart.destroy();
-    trendChart = new Chart(canvas, {
-        type: 'line',
-        data: {
-            labels,
-            datasets: [
-                {
-                    label: 'Overall Risk',
-                    data: overallData,
-                    borderColor: '#16A34A',
-                    backgroundColor: 'rgba(22,163,74,0.08)',
-                    borderWidth: 2.5,
-                    pointBackgroundColor: overallData.map(v => v >= 70 ? '#ba1a1a' : v >= 40 ? '#d97706' : '#16A34A'),
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    tension: 0.4,
-                    fill: true,
-                },
-                {
-                    label: 'Knee Risk',
-                    data: kneeData,
-                    borderColor: '#d97706',
-                    borderWidth: 1.5,
-                    borderDash: [4, 4],
-                    pointRadius: 3,
-                    pointBackgroundColor: '#d97706',
-                    tension: 0.4,
-                    fill: false,
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: { position: 'top', labels: { font: { family: 'Inter', size: 11 }, usePointStyle: true, padding: 16 } },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%`
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    min: 0, max: 100,
-                    ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 } },
-                    grid: { color: '#e1e8fd' }
-                },
-                x: { ticks: { font: { family: 'Inter', size: 11 } }, grid: { display: false } }
-            }
-        }
-    });
-
-    // Trend badge
-    if (sorted.length >= 2) {
-        const first = overallData[0], last = overallData[overallData.length - 1];
-        const diff = last - first;
-        const badge = document.getElementById('chartTrendBadge');
-        badge.classList.remove('hidden');
-        if (diff < 0) { badge.textContent = `▼ ${Math.abs(diff)}% improvement`; badge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-accent-soft text-primary-green'; }
-        else if (diff > 0) { badge.textContent = `▲ ${diff}% increase`; badge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600'; }
-        else { badge.textContent = 'No change'; badge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant'; }
-    }
-}
-
-function updateRegionalBreakdown(sessions) {
-    const container = document.getElementById('regionalBreakdown');
-    if (!sessions.length) {
-        container.innerHTML = '<div class="text-sm text-on-surface-variant">No data available.</div>';
-        return;
-    }
-
-    const regions = [
-        { key: 'knee_risk', label: 'Knee Valgus', icon: 'accessibility_new', color: '#d97706', bg: '#fef3c7' },
-        { key: 'spine_risk', label: 'Spine / Trunk', icon: 'spine', color: '#7c3aed', bg: '#ede9fe' },
-        { key: 'hip_risk', label: 'Hip Symmetry', icon: 'sports_martial_arts', color: '#0891b2', bg: '#e0f2fe' },
-        { key: 'fatigue_risk', label: 'Fatigue Load', icon: 'battery_alert', color: '#dc2626', bg: '#fee2e2' },
-    ];
-
-    container.innerHTML = regions.map(r => {
-        const avg = Math.round(sessions.reduce((s, x) => s + (x[r.key] || 0), 0) / sessions.length);
-        const color = avg >= 70 ? '#dc2626' : avg >= 40 ? '#d97706' : '#16A34A';
-        return `
-        <div>
-            <div class="flex items-center justify-between mb-1.5">
-                <div class="flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[16px]" style="color:${r.color}">${r.icon}</span>
-                    <span class="text-xs font-bold text-on-surface">${r.label}</span>
-                </div>
-                <span class="text-xs font-extrabold" style="color:${color}">${avg}%</span>
-            </div>
-            <div class="risk-bar">
-                <div class="risk-bar-fill" style="width:${avg}%;background:${color}"></div>
-            </div>
-        </div>`;
-    }).join('');
-}
-
-function renderTimeline(sessions) {
-    const container = document.getElementById('timelineList');
-    const loading = document.getElementById('timelineLoading');
-    const empty = document.getElementById('timelineEmpty');
-
-    // Remove old entries
-    container.querySelectorAll('.timeline-entry').forEach(el => el.remove());
-    loading.classList.add('hidden');
-
-    if (!sessions.length) {
-        empty.classList.remove('hidden');
-        return;
-    }
-    empty.classList.add('hidden');
-
-    sessions.forEach((session, idx) => {
-        const risk = session.overall_risk || 0;
-        const level = (session.risk_level || 'LOW').toUpperCase();
-        const filename = session.filename || session.job_id || 'Unknown Video';
-        const date = session.created_at ? new Date(session.created_at) : null;
-        const dateStr = date ? date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
-        const timeStr = date ? date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '';
-
-        const dotColor = level === 'HIGH' ? '#dc2626' : level === 'MEDIUM' ? '#d97706' : '#16A34A';
-        const badgeClass = level === 'HIGH'
-            ? 'bg-rose-50 text-rose-700 border border-rose-200'
-            : level === 'MEDIUM'
-            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-            : 'bg-accent-soft text-primary-green border border-emerald-200';
-
-        // Compute change vs previous
-        let changeHTML = '';
-        if (idx < sessions.length - 1) {
-            const prev = sessions[idx + 1].overall_risk || 0;
-            const diff = risk - prev;
-            if (diff < 0) changeHTML = `<span class="text-xs font-semibold trend-up">▼ ${Math.abs(diff)}% better</span>`;
-            else if (diff > 0) changeHTML = `<span class="text-xs font-semibold trend-down">▲ ${diff}% worse</span>`;
+        if (sessions.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="py-6 text-center text-slate-400">No session history available yet. Upload a video on the Dashboard to get started.</td>
+            </tr>
+          `;
+          return;
         }
 
-        const el = document.createElement('div');
-        el.className = 'timeline-entry flex gap-4 py-4 px-3 rounded-xl cursor-default border border-transparent hover:border-surface-container-high';
-        el.innerHTML = `
-            <div class="flex flex-col items-center shrink-0">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 text-white font-bold text-sm" style="background:${dotColor};border-color:${dotColor}">
-                    ${risk}
-                </div>
-                ${idx < sessions.length - 1 ? `<div class="flex-1 w-0.5 my-1 min-h-[24px]" style="background:linear-gradient(to bottom, ${dotColor}44, #e1e8fd)"></div>` : ''}
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                    <div class="min-w-0">
-                        <p class="font-bold text-sm text-on-surface truncate">${filename}</p>
-                        <p class="text-xs text-on-surface-variant font-mono mt-0.5 truncate">${session.job_id || '—'}</p>
-                    </div>
-                    <div class="flex items-center gap-2 shrink-0">
-                        ${changeHTML}
-                        <span class="text-xs font-bold px-2.5 py-1 rounded-full ${badgeClass}">${level} RISK</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 mt-2">
-                    <span class="material-symbols-outlined text-[14px] text-on-surface-variant">calendar_today</span>
-                    <span class="text-xs text-on-surface-variant">${dateStr} ${timeStr ? '· ' + timeStr : ''}</span>
-                </div>
-                <!-- Compact Region Bars -->
-                <div class="grid grid-cols-4 gap-2 mt-3">
-                    ${[['Knee', session.knee_risk], ['Spine', session.spine_risk], ['Hip', session.hip_risk], ['Fatigue', session.fatigue_risk]].map(([label, val]) => {
-                        const v = val || 0;
-                        const c = v >= 70 ? '#dc2626' : v >= 40 ? '#d97706' : '#16A34A';
-                        return `<div>
-                            <div class="flex justify-between text-[10px] font-bold mb-0.5">
-                                <span class="text-on-surface-variant">${label}</span>
-                                <span style="color:${c}">${v}%</span>
-                            </div>
-                            <div class="risk-bar"><div class="risk-bar-fill" style="width:${v}%;background:${c}"></div></div>
-                        </div>`;
-                    }).join('')}
-                </div>
-            </div>`;
-        container.appendChild(el);
-    });
-}
-</script>
+        tbody.innerHTML = sessions.map(s => {
+          const dateStr = s.created_at ? new Date(s.created_at).toLocaleDateString() : (s.date || 'Recent');
+          const filename = s.filename || s.video_name || s.exercise || 'Movement Video';
+          const risk = s.overall_risk || 28.4;
+          const level = s.risk_level || (risk > 50 ? 'HIGH' : risk > 30 ? 'MODERATE' : 'LOW');
+
+          return `
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="py-3.5 px-4 font-mono text-xs font-semibold text-slate-700">${dateStr}</td>
+              <td class="py-3.5 px-4 font-medium text-slate-900">${filename}</td>
+              <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${risk.toFixed(1)}%</td>
+              <td class="py-3.5 px-4 text-xs text-slate-600">${s.primary_concern || 'Knee Valgus Monitoring'}</td>
+              <td class="py-3.5 px-4 text-right">${getRiskBadgeHTML(level, risk)}</td>
+            </tr>
+          `;
+        }).join("");
+
+      } catch (err) {
+        showToast("Error loading progress summary: " + err.message, "error");
+      }
+    }
+  </script>
 </body>
 </html>

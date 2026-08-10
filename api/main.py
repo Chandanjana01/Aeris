@@ -26,17 +26,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi.staticfiles import StaticFiles
 
-from api.routes import analyze, auth, recommendations, report, status
+from api.routes import analyze, auth, progress, recommendations, report, status
 
 app = FastAPI(
-    title="Ergonomic Risk Analysis API",
+    title="AERIS Athlete Performance API",
     description=(
-        "Upload a video of a person moving and receive a full biomechanical "
-        "risk assessment report. Powered by Google MediaPipe keypoint tracking "
-        "and Groq LLM physical therapy recommendation engine."
+        "Unified Biomechanical Movement Intelligence & Ergonomic Risk Analysis API. "
+        "Powered by Google MediaPipe keypoint tracking and Groq LLM physical therapy recommendation engine."
     ),
-    version="1.1.0",
-    contact={"name": "Risk Analyse Project"},
+    version="2.0.0",
+    contact={"name": "AERIS Movement Intelligence"},
 )
 
 # Allow any frontend / Postman / mobile app to call the API
@@ -54,25 +53,59 @@ app.include_router(analyze.router,         tags=["1. Analysis"])
 app.include_router(status.router,          tags=["2. Status"])
 app.include_router(report.router,          tags=["3. Report"])
 app.include_router(recommendations.router, tags=["4. AI Recommendations"])
+app.include_router(progress.router,        tags=["5. Progress Tracking"])
+
+# Also include with /api prefix for clean API route structure
+app.include_router(auth.router,            prefix="/api", include_in_schema=False)
+app.include_router(analyze.router,         prefix="/api", include_in_schema=False)
+app.include_router(status.router,          prefix="/api", include_in_schema=False)
+app.include_router(report.router,          prefix="/api", include_in_schema=False)
+app.include_router(recommendations.router, prefix="/api", include_in_schema=False)
+app.include_router(progress.router,        prefix="/api", include_in_schema=False)
 
 
-# ── Serve Frontend Dashboard ───────────────────────────────────────────────
+
+# ── Serve Frontend Web App ───────────────────────────────────────────────
 frontend_path = PROJECT_ROOT / "frontend"
 if frontend_path.exists():
     app.mount("/dashboard", StaticFiles(directory=str(frontend_path), html=True), name="dashboard")
+    app.mount("/static", StaticFiles(directory=str(frontend_path)), name="static")
 
-
-# ── Health check ───────────────────────────────────────────────────────────
-@app.get("/", tags=["Health"], summary="Health check")
-async def root():
+@app.get("/api/health", tags=["Health"], summary="API Health Check")
+async def health_check():
     return {
-        "service": "Ergonomic Risk Analysis API",
+        "service": "AERIS Athlete Performance API",
         "status": "running",
+        "version": "2.0.0",
         "docs": "/docs",
-        "dashboard": "/dashboard",
-        "endpoints": {
-            "upload_video":  "POST /analyze",
-            "check_status":  "GET  /status/{job_id}",
-            "fetch_report":  "GET  /report/{job_id}",
-        },
+        "dashboard": "/dashboard"
     }
+
+if frontend_path.exists():
+    from fastapi.responses import FileResponse
+
+    @app.get("/", tags=["Frontend"], summary="Serve AERIS Web App")
+    async def serve_index():
+        return FileResponse(str(frontend_path / "index.html"))
+
+    @app.get("/{page_name}.html", tags=["Frontend"], include_in_schema=False)
+    async def serve_page(page_name: str):
+        page_file = frontend_path / f"{page_name}.html"
+        if page_file.exists():
+            return FileResponse(str(page_file))
+        return FileResponse(str(frontend_path / "index.html"))
+
+    @app.get("/aeris.css", include_in_schema=False)
+    async def serve_css():
+        return FileResponse(str(frontend_path / "aeris.css"))
+
+    @app.get("/app.js", include_in_schema=False)
+    async def serve_js():
+        return FileResponse(str(frontend_path / "app.js"))
+
+    @app.get("/logo.png", include_in_schema=False)
+    async def serve_logo():
+        return FileResponse(str(frontend_path / "logo.png"))
+
+
+

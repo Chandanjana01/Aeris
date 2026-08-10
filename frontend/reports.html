@@ -1,331 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>AERIS | Performance Reports</title>
-    <!-- Tailwind CSS with Forms & Container Queries -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet"/>
-    <!-- Material Symbols -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AERIS | Unified Performance Reports & Biomechanical Analytics</title>
 
-    <!-- Tailwind Config with Design System Tokens -->
-    <script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              "colors": {
-                  "on-error-container": "#93000a",
-                  "surface-bright": "#f9f9ff",
-                  "tertiary-container": "#008644",
-                  "on-primary-fixed": "#002109",
-                  "on-secondary": "#ffffff",
-                  "on-tertiary-fixed-variant": "#005227",
-                  "on-primary-container": "#f7fff2",
-                  "secondary-fixed-dim": "#4ae176",
-                  "error": "#ba1a1a",
-                  "tertiary-fixed": "#6dfe9c",
-                  "on-secondary-container": "#007432",
-                  "on-secondary-fixed": "#002109",
-                  "primary": "#006b2c",
-                  "error-container": "#ffdad6",
-                  "on-surface-variant": "#3e4a3d",
-                  "on-primary": "#ffffff",
-                  "surface-variant": "#dce2f7",
-                  "on-tertiary": "#ffffff",
-                  "primary-container": "#00873a",
-                  "surface": "#f9f9ff",
-                  "surface-container": "#e9edff",
-                  "primary-fixed-dim": "#62df7d",
-                  "on-tertiary-container": "#f6fff3",
-                  "on-primary-fixed-variant": "#005320",
-                  "secondary-fixed": "#6bff8f",
-                  "on-background": "#141b2b",
-                  "outline": "#6e7b6c",
-                  "tertiary-fixed-dim": "#4de082",
-                  "surface-container-highest": "#dce2f7",
-                  "surface-container-lowest": "#ffffff",
-                  "surface-container-low": "#f1f3ff",
-                  "primary-fixed": "#7ffc97",
-                  "inverse-on-surface": "#edf0ff",
-                  "secondary-container": "#6bff8f",
-                  "on-tertiary-fixed": "#00210c",
-                  "on-secondary-fixed-variant": "#005321",
-                  "secondary": "#006e2f",
-                  "surface-tint": "#006e2d",
-                  "surface-dim": "#d3daef",
-                  "on-surface": "#141b2b",
-                  "inverse-surface": "#293040",
-                  "background": "#f9f9ff",
-                  "surface-container-high": "#e1e8fd",
-                  "tertiary": "#006a34",
-                  "inverse-primary": "#62df7d",
-                  "outline-variant": "#bdcaba",
-                  "on-error": "#ffffff",
-                  "accent-soft": "#DCFCE7",
-                  "primary-green": "#16A34A"
-              },
-              "borderRadius": {
-                  "DEFAULT": "0.25rem",
-                  "lg": "0.5rem",
-                  "xl": "0.75rem",
-                  "full": "9999px"
-              },
-              "spacing": {
-                  "unit": "8px",
-                  "container-max": "1440px",
-                  "stack-sm": "12px",
-                  "stack-lg": "40px",
-                  "gutter": "24px",
-                  "margin-mobile": "20px",
-                  "stack-md": "24px",
-                  "margin-desktop": "48px"
-              },
-              "fontFamily": {
-                  "display-hero-mobile": ["Plus Jakarta Sans"],
-                  "body-sm": ["Inter"],
-                  "body-md": ["Inter"],
-                  "body-lg": ["Inter"],
-                  "display-hero": ["Plus Jakarta Sans"],
-                  "headline-lg": ["Plus Jakarta Sans"],
-                  "label-caps": ["Inter"],
-                  "headline-md": ["Plus Jakarta Sans"]
-              }
-            }
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- AERIS Custom Design Tokens CSS -->
+  <link rel="stylesheet" href="/aeris.css">
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-highest": "#dee4df",
+            "surface-bright": "#fafbfa",
+            "background": "#fafbfa",
+            "surface": "#fafbfa",
+            "primary": "#16a34a",
+            "primary-container": "#b7f34a",
+            "on-primary-container": "#111714",
+            "error": "#ba1a1a",
+            "outline-variant": "#c3c9b0"
+          },
+          fontFamily: {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"]
           }
         }
-    </script>
+      }
+    }
+  </script>
 </head>
-<body class="bg-surface-container-lowest text-on-surface font-body-md min-h-screen selection:bg-accent-soft selection:text-primary-green">
+<body class="bg-background text-zinc-900 antialiased font-body min-h-screen flex flex-col">
 
-<!-- Top Navigation Bar -->
-<nav class="docked full-width top-0 shadow-sm bg-surface-container-lowest dark:bg-inverse-surface shadow-[0_10px_30px_rgba(0,0,0,0.04)] hidden md:block border-b border-surface-container-low">
-    <div class="flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto">
-        <div class="text-headline-md font-headline-md font-extrabold tracking-tighter text-primary flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary-green text-3xl">sports_score</span>
-            AERIS
-        </div>
-        <div class="flex gap-stack-md font-body-md text-body-md">
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="index.html">Dashboard</a>
-            <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-colors duration-200" href="reports.html">Reports</a>
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="history.html">Progress</a>
-            <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200" href="settings.html">Settings</a>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <button id="userProfileBtn" title="View Profile" class="flex items-center justify-center p-0.5 rounded-full border-2 border-primary-green/30 hover:border-primary-green transition-all cursor-pointer shadow-xs hover:scale-105">
-                <img id="userNavAvatar" alt="Athlete Profile Avatar" class="w-8 h-8 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtv09NYosvrJzaXK9Y7vkNm3kjFxn42xJzB565_VF6lvgVKJHKFmYLdxp-AuH7AwmLLMZPFouYasppm359lZmeRU4DjqmoK3TGA8ziCkL8VbCSdc4LMicxe0fKDT5wgxXugwS0fqaov2X8BH5u9HURMVKOJPpN6i-p8Y6L62nLLw7ku-HEqU_Kj-w2pSsbeB7DZmnw7ueAzcq1blrY9p4SYnUiR4g6IHlTLfteM2awdXmIpTT_9twt6A"/>
-            </button>
-        </div>
+  <!-- Top Navigation Bar -->
+  <nav class="fixed top-0 w-full z-50 h-[84px] bg-[#fafbfa]/95 backdrop-blur-md border-b border-slate-200 flex justify-between items-center px-6 md:px-10 shadow-sm">
+    <div class="flex items-center gap-3 md:gap-6">
+      <button id="aeris-menu-toggle" aria-label="Toggle Menu" class="p-2 rounded-xl text-slate-700 hover:text-emerald-700 hover:bg-slate-100 transition-colors flex items-center justify-center cursor-pointer">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+      <a href="/index.html" class="flex items-center gap-3 py-1">
+        <img src="/logo.png" alt="AERIS Logo" class="h-14 md:h-16 w-auto object-contain max-h-16 transition-transform hover:scale-105">
+      </a>
     </div>
-</nav>
+  </nav>
 
-<!-- Main Container -->
-<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg md:py-12">
+  <!-- Main Content Container -->
+  <main class="mt-[84px] p-6 md:p-10 flex-grow max-w-[1600px] w-full mx-auto pb-20">
+
     
-    <!-- Page Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-            <h1 class="font-display-hero-mobile text-2xl md:text-3xl font-extrabold text-primary-green tracking-tight">
-                Performance Reports &amp; Analytics
-            </h1>
-            <p class="font-body-md text-on-surface-variant text-sm mt-1">
-                Historical movement assessments, biomechanical risk breakdowns, and posture action plans.
-            </p>
+    <header class="mb-8">
+      <h1 class="text-2xl md:text-3xl font-extrabold font-headline text-slate-900 mb-1">
+        Performance Reports & Clinical Analytics
+      </h1>
+      <p class="text-slate-600 text-sm">
+        Review historical biomechanical assessments, inspect joint risk metrics, and export data.
+      </p>
+    </header>
+
+    <!-- Stat Bento Grid Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="aeris-card p-5">
+        <div class="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">
+          <span class="material-symbols-outlined text-base">folder_open</span> Total Sessions
         </div>
-        <div class="flex items-center gap-3">
-            <button id="refreshReportsBtn" class="bg-surface hover:bg-surface-container-low text-on-surface border border-outline-variant px-4 py-2 rounded-lg font-body-sm font-medium transition-colors flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">refresh</span> Refresh Reports
-            </button>
-            <button id="exportAllJsonBtn" class="bg-primary-green hover:bg-tertiary-container text-on-primary px-4 py-2 rounded-lg font-body-sm font-medium transition-colors shadow-sm flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">download</span> Export Summary
-            </button>
+        <div class="text-3xl font-extrabold font-headline text-slate-900" id="total-reports-count">0</div>
+        <div class="text-xs text-emerald-600 font-bold mt-2 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">trending_up</span> Syncing with SQLite/MongoDB
         </div>
+      </div>
+
+      <div class="aeris-card p-5">
+        <div class="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">
+          <span class="material-symbols-outlined text-base">vital_signs</span> Readiness Score
+        </div>
+        <div class="text-3xl font-extrabold font-headline text-slate-900">86 <span class="text-base text-slate-400 font-normal">/ 100</span></div>
+        <div class="w-full h-1.5 bg-slate-100 rounded-full mt-3 overflow-hidden">
+          <div class="h-full bg-emerald-500 rounded-full w-[86%]"></div>
+        </div>
+      </div>
+
+      <div class="aeris-card p-5">
+        <div class="flex items-center gap-2 text-red-600 text-xs font-bold uppercase tracking-wider mb-2">
+          <span class="material-symbols-outlined text-base">warning</span> Primary Concern
+        </div>
+        <div class="text-lg font-bold font-headline text-slate-900">Dynamic Knee Valgus</div>
+        <div class="text-xs text-slate-500 mt-2">Identified during landing impact phase.</div>
+      </div>
+
+      <div class="aeris-card p-5">
+        <div class="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">
+          <span class="material-symbols-outlined text-base">accessibility_new</span> Optimal Mechanics
+        </div>
+        <div class="text-3xl font-extrabold font-headline text-emerald-700">92.4%</div>
+        <div class="text-xs text-slate-500 mt-2">Symmetric movement baseline.</div>
+      </div>
     </div>
 
-    <!-- Overview Stat Bento Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
-        <div class="glass-card rounded-xl p-6 hover-lift flex flex-col justify-between">
-            <div class="flex justify-between items-start">
-                <span class="text-body-sm font-medium text-on-surface-variant">Total Sessions</span>
-                <span class="material-symbols-outlined text-primary-green bg-accent-soft p-2 rounded-md">video_library</span>
-            </div>
-            <div class="mt-4">
-                <span id="statTotalSessions" class="font-headline-lg text-3xl font-bold text-on-surface">0</span>
-                <span class="text-xs text-outline block mt-1">Completed Analyses</span>
-            </div>
-        </div>
+    <!-- Data Controls Bar -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div class="relative w-full sm:w-80">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+        <input id="search-input" type="text" onkeyup="filterReports()" class="w-full bg-white border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" placeholder="Search Job ID or Video Name...">
+      </div>
 
-        <div class="glass-card rounded-xl p-6 hover-lift flex flex-col justify-between">
-            <div class="flex justify-between items-start">
-                <span class="text-body-sm font-medium text-on-surface-variant">Avg. Readiness Score</span>
-                <span class="material-symbols-outlined text-emerald-600 bg-emerald-100 p-2 rounded-md">speed</span>
-            </div>
-            <div class="mt-4">
-                <span id="statAvgReadiness" class="font-headline-lg text-3xl font-bold text-on-surface">--%</span>
-                <span class="text-xs text-outline block mt-1">Across All Assessments</span>
-            </div>
-        </div>
-
-        <div class="glass-card rounded-xl p-6 hover-lift flex flex-col justify-between">
-            <div class="flex justify-between items-start">
-                <span class="text-body-sm font-medium text-on-surface-variant">Primary Hazard</span>
-                <span class="material-symbols-outlined text-amber-600 bg-amber-100 p-2 rounded-md">warning</span>
-            </div>
-            <div class="mt-4">
-                <span id="statPrimaryHazard" class="font-headline-md text-xl font-bold text-on-surface">Knee Valgus</span>
-                <span class="text-xs text-outline block mt-1">Most Frequent Flag</span>
-            </div>
-        </div>
-
-        <div class="glass-card rounded-xl p-6 hover-lift flex flex-col justify-between">
-            <div class="flex justify-between items-start">
-                <span class="text-body-sm font-medium text-on-surface-variant">Optimal Mechanics</span>
-                <span class="material-symbols-outlined text-emerald-600 bg-emerald-100 p-2 rounded-md">verified</span>
-            </div>
-            <div class="mt-4">
-                <span id="statOptimalRate" class="font-headline-lg text-3xl font-bold text-on-surface">--%</span>
-                <span class="text-xs text-outline block mt-1">Low Risk Rate</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Search & Filter Controls -->
-    <div class="glass-card rounded-xl p-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="relative w-full md:w-80">
-            <span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-lg">search</span>
-            <input type="text" id="searchInput" placeholder="Search by video name or job ID..." class="w-full pl-9 pr-4 py-2 bg-surface rounded-lg border border-outline-variant text-body-sm text-on-surface focus:outline-none focus:border-primary-green"/>
-        </div>
-        <div class="flex items-center gap-3 w-full md:w-auto overflow-x-auto">
-            <span class="text-xs font-semibold text-outline uppercase tracking-wider shrink-0">Filter Risk:</span>
-            <select id="riskFilter" class="bg-surface border border-outline-variant text-body-sm rounded-lg px-3 py-2 text-on-surface focus:outline-none focus:border-primary-green">
-                <option value="ALL">All Levels</option>
-                <option value="LOW">Low Risk</option>
-                <option value="MODERATE">Moderate Risk</option>
-                <option value="HIGH">High Risk</option>
-                <option value="VERY HIGH">Very High Risk</option>
-            </select>
-            <select id="sortOrder" class="bg-surface border border-outline-variant text-body-sm rounded-lg px-3 py-2 text-on-surface focus:outline-none focus:border-primary-green">
-                <option value="NEWEST">Newest First</option>
-                <option value="RISK_HIGH">Highest Risk First</option>
-                <option value="RISK_LOW">Lowest Risk First</option>
-            </select>
-        </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold text-slate-400 mr-2">Filter:</span>
+        <button onclick="setRiskFilter('ALL')" id="filter-all" class="px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm">All</button>
+        <button onclick="setRiskFilter('LOW')" id="filter-low" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Low Risk</button>
+        <button onclick="setRiskFilter('MODERATE')" id="filter-mod" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Moderate</button>
+        <button onclick="setRiskFilter('HIGH')" id="filter-high" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">High Risk</button>
+      </div>
     </div>
 
     <!-- Reports Table Container -->
-    <div class="glass-card rounded-xl overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-surface-container-low border-b border-surface-container-high text-xs font-bold text-outline uppercase tracking-wider">
-                        <th class="py-4 px-6">Video / Session</th>
-                        <th class="py-4 px-6">Overall Risk</th>
-                        <th class="py-4 px-6">Level</th>
-                        <th class="py-4 px-6">Regional Breakdown (K / H / S / F)</th>
-                        <th class="py-4 px-6 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="reportsTableBody" class="divide-y divide-surface-container-low text-body-sm">
-                    <!-- Dynamic rows rendered by reports.js -->
-                    <tr>
-                        <td colspan="5" class="py-12 text-center text-outline italic">
-                            Scanning output directory for report records...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="aeris-card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[700px]">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <th class="py-3.5 px-6">Job ID</th>
+              <th class="py-3.5 px-6">Video File</th>
+              <th class="py-3.5 px-6">Date Analyzed</th>
+              <th class="py-3.5 px-6">Overall Risk</th>
+              <th class="py-3.5 px-6">Status Badge</th>
+              <th class="py-3.5 px-6 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="reports-table-body" class="divide-y divide-slate-100 text-sm">
+            <tr>
+              <td colspan="6" class="py-8 text-center text-slate-400">Loading historical reports...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-</main>
+  </main>
 
-<!-- Detailed Report Inspector Modal (Hidden by default) -->
-<div id="reportModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-surface rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-surface-container-low relative">
-        <!-- Close Button -->
-        <button id="closeModalBtn" class="absolute top-6 right-6 text-outline hover:text-on-surface p-1 rounded-lg transition-colors">
-            <span class="material-symbols-outlined text-2xl">close</span>
+  <!-- Report Detail Modal -->
+  <div id="report-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden relative">
+      
+      <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+        <div>
+          <h3 class="font-headline font-bold text-slate-900 text-lg" id="modal-job-id">Report Details</h3>
+          <p class="text-xs text-slate-500 font-mono" id="modal-filename">video.mp4</p>
+        </div>
+        <button onclick="closeReportModal()" class="p-2 text-slate-400 hover:text-slate-700 rounded-full">
+          <span class="material-symbols-outlined">close</span>
         </button>
+      </div>
 
-        <!-- Modal Content -->
-        <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 rounded-full bg-accent-soft flex items-center justify-center text-primary-green">
-                <span class="material-symbols-outlined text-2xl">analytics</span>
-            </div>
-            <div>
-                <h2 id="modalVideoTitle" class="font-headline-lg text-xl font-bold text-on-surface">Video Session Title</h2>
-                <p id="modalJobId" class="text-xs text-outline font-mono">Job ID: --</p>
-            </div>
-        </div>
+      <div class="p-6 overflow-y-auto flex-1 space-y-6" id="modal-body-content">
+        <!-- Dynamic content filled by JS -->
+      </div>
 
-        <!-- Scores Summary Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-surface-container-low rounded-xl p-4 text-center">
-                <span class="text-xs font-semibold text-outline uppercase block">Overall Risk</span>
-                <span id="modalRiskScore" class="font-headline-lg text-2xl font-bold text-on-surface mt-1 block">--/100</span>
-            </div>
-            <div class="bg-surface-container-low rounded-xl p-4 text-center">
-                <span class="text-xs font-semibold text-outline uppercase block">Level</span>
-                <span id="modalRiskLevel" class="font-label-caps text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full mt-2 inline-block">--</span>
-            </div>
-            <div class="bg-surface-container-low rounded-xl p-4 text-center">
-                <span class="text-xs font-semibold text-outline uppercase block">Landing Quality</span>
-                <span id="modalLandingScore" class="font-headline-lg text-2xl font-bold text-on-surface mt-1 block">--</span>
-            </div>
-            <div class="bg-surface-container-low rounded-xl p-4 text-center">
-                <span class="text-xs font-semibold text-outline uppercase block">Symmetry</span>
-                <span id="modalSymmetryScore" class="font-headline-lg text-2xl font-bold text-on-surface mt-1 block">--%</span>
-            </div>
-        </div>
+      <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-3">
+        <button onclick="closeReportModal()" class="btn-secondary py-2 px-5 text-xs rounded-full">Close</button>
+        <button onclick="downloadReportJSON()" class="btn-primary py-2 px-5 text-xs rounded-full">
+          <span class="material-symbols-outlined text-base">download</span> Download Report JSON
+        </button>
+      </div>
 
-        <!-- Regional Risks Breakdown -->
-        <div class="mb-6">
-            <h3 class="text-sm font-bold text-on-surface mb-3">Regional Risk Breakdown</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-surface p-3 rounded-lg border border-surface-container-low">
-                    <span class="text-xs text-outline block">Knee</span>
-                    <span id="modalKneeRisk" class="font-bold text-on-surface text-base">0%</span>
-                </div>
-                <div class="bg-surface p-3 rounded-lg border border-surface-container-low">
-                    <span class="text-xs text-outline block">Hip</span>
-                    <span id="modalHipRisk" class="font-bold text-on-surface text-base">0%</span>
-                </div>
-                <div class="bg-surface p-3 rounded-lg border border-surface-container-low">
-                    <span class="text-xs text-outline block">Spine</span>
-                    <span id="modalSpineRisk" class="font-bold text-on-surface text-base">0%</span>
-                </div>
-                <div class="bg-surface p-3 rounded-lg border border-surface-container-low">
-                    <span class="text-xs text-outline block">Fatigue</span>
-                    <span id="modalFatigueRisk" class="font-bold text-on-surface text-base">0%</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dynamic Alerts & Recommendations -->
-        <div class="mb-6">
-            <h3 class="text-sm font-bold text-on-surface mb-3">Posture Alerts &amp; Corrective Plan</h3>
-            <div id="modalAlertsContainer" class="flex flex-col gap-2">
-                <!-- Alerts rendered dynamically -->
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex justify-end gap-3 pt-4 border-t border-surface-container-low">
-            <button id="downloadJsonBtn" class="bg-surface border border-outline-variant hover:bg-surface-container-low px-4 py-2 rounded-lg font-body-sm font-medium transition-colors flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">download</span> Download JSON Report
-            </button>
-        </div>
     </div>
-</div>
+  </div>
 
-<!-- Page Controller Script -->
-<script src="reports.js"></script>
+  <script src="/app.js"></script>
+  <script>
+    let allReports = [];
+    let currentFilter = "ALL";
+    let activeModalReport = null;
 
+    document.addEventListener("DOMContentLoaded", fetchReportsList);
+
+    async function fetchReportsList() {
+      try {
+        const res = await apiRequest("/reports", "GET");
+        allReports = res.reports || [];
+        document.getElementById("total-reports-count").textContent = allReports.length;
+        renderReportsTable(allReports);
+      } catch (err) {
+        showToast("Error fetching reports list: " + err.message, "error");
+        document.getElementById("reports-table-body").innerHTML = `
+          <tr>
+            <td colspan="6" class="py-8 text-center text-red-500">Failed to load reports. Ensure backend is running.</td>
+          </tr>
+        `;
+      }
+    }
+
+    function setRiskFilter(filter) {
+      currentFilter = filter;
+      ["ALL", "LOW", "MODERATE", "HIGH"].forEach(f => {
+        const btn = document.getElementById(`filter-${f.toLowerCase().substring(0, 3)}`);
+        if (btn) {
+          if (f === filter) {
+            btn.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm";
+          } else {
+            btn.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200";
+          }
+        }
+      });
+      filterReports();
+    }
+
+    function filterReports() {
+      const q = document.getElementById("search-input").value.toLowerCase();
+      const filtered = allReports.filter(r => {
+        const matchQ = (r.job_id || "").toLowerCase().includes(q) || (r.filename || r.video_name || "").toLowerCase().includes(q);
+        const matchFilter = currentFilter === "ALL" || (r.risk_level || "").toUpperCase() === currentFilter;
+        return matchQ && matchFilter;
+      });
+      renderReportsTable(filtered);
+    }
+
+    function renderReportsTable(reports) {
+      const tbody = document.getElementById("reports-table-body");
+      if (reports.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="py-8 text-center text-slate-400">No matching reports found.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = reports.map(r => {
+        const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString() : 'Recent';
+        return `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="py-4 px-6 font-mono text-xs font-semibold text-slate-700">${(r.job_id || '').substring(0, 10)}...</td>
+            <td class="py-4 px-6 font-medium text-slate-900">${r.filename || r.video_name || 'video.mp4'}</td>
+            <td class="py-4 px-6 text-slate-500 text-xs">${dateStr}</td>
+            <td class="py-4 px-6 font-mono font-bold text-slate-900">${(r.overall_risk || 0).toFixed(1)}%</td>
+            <td class="py-4 px-6">${getRiskBadgeHTML(r.risk_level, r.overall_risk)}</td>
+            <td class="py-4 px-6 text-right">
+              <button onclick="openReportModal('${r.job_id}')" class="btn-secondary py-1.5 px-4 text-xs rounded-full">
+                View Detail
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function openReportModal(jobId) {
+      try {
+        showToast("Fetching detailed report " + jobId.substring(0, 8) + "...", "info");
+        const report = await apiRequest(`/report/${jobId}`, "GET");
+        activeModalReport = report;
+
+        document.getElementById("modal-job-id").textContent = "Job ID: " + report.job_id;
+        document.getElementById("modal-filename").textContent = report.video_name || jobId;
+
+        const body = document.getElementById("modal-body-content");
+        const bp = report.body_part_risks || {};
+        const recs = report.recommendations || report.llm_recommendations || [];
+
+        body.innerHTML = `
+          <div class="bg-slate-900 text-white rounded-xl p-5 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Overall Risk Score</div>
+              <div class="text-3xl font-extrabold font-headline text-emerald-400 mt-1">${(report.overall_risk || 0).toFixed(1)}%</div>
+            </div>
+            <div>${getRiskBadgeHTML(report.risk_level)}</div>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Joint & Body Region Risks</h4>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="p-3 bg-slate-50 border rounded-lg flex justify-between">
+                <span>Knee Kinematics</span>
+                <strong class="font-mono text-emerald-700">${(bp.knee_risk || 0).toFixed(1)}%</strong>
+              </div>
+              <div class="p-3 bg-slate-50 border rounded-lg flex justify-between">
+                <span>Lumbar Spine</span>
+                <strong class="font-mono text-emerald-700">${(bp.spine_risk || 0).toFixed(1)}%</strong>
+              </div>
+              <div class="p-3 bg-slate-50 border rounded-lg flex justify-between">
+                <span>Hip Extension</span>
+                <strong class="font-mono text-emerald-700">${(bp.hip_risk || 0).toFixed(1)}%</strong>
+              </div>
+              <div class="p-3 bg-slate-50 border rounded-lg flex justify-between">
+                <span>Fatigue Score</span>
+                <strong class="font-mono text-emerald-700">${(bp.fatigue_risk || 0).toFixed(1)}%</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">AI Corrective Recommendations</h4>
+            <div class="space-y-2 text-xs">
+              ${recs.length > 0 ? recs.map(r => `
+                <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-slate-800">
+                  <div class="font-bold text-emerald-900 mb-0.5">${typeof r === 'string' ? r : r.title}</div>
+                  <div>${typeof r === 'object' ? r.details || '' : ''}</div>
+                </div>
+              `).join('') : '<div class="text-slate-400">No specific alerts. Movement mechanics optimal.</div>'}
+            </div>
+          </div>
+        `;
+
+        document.getElementById("report-modal").classList.remove("hidden");
+        document.getElementById("report-modal").classList.add("flex");
+      } catch (err) {
+        showToast("Error opening report: " + err.message, "error");
+      }
+    }
+
+    function closeReportModal() {
+      document.getElementById("report-modal").classList.add("hidden");
+      document.getElementById("report-modal").classList.remove("flex");
+    }
+
+    function downloadReportJSON() {
+      if (!activeModalReport) return;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(activeModalReport, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `aeris_report_${activeModalReport.job_id}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast("Report JSON exported successfully!", "success");
+    }
+  </script>
 </body>
 </html>

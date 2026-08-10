@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AERIS | Unified Biomechanical Dashboard & Video Analysis</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- AERIS Custom Design Tokens CSS -->
+  <link rel="stylesheet" href="/aeris.css">
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-highest": "#dee4df",
+            "surface-bright": "#fafbfa",
+            "background": "#fafbfa",
+            "surface": "#fafbfa",
+            "primary": "#16a34a",
+            "primary-container": "#b7f34a",
+            "on-primary-container": "#111714",
+            "error": "#ba1a1a",
+            "outline-variant": "#c3c9b0"
+          },
+          fontFamily: {
+            "headline": ["Plus Jakarta Sans", "sans-serif"],
+            "body": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background text-zinc-900 antialiased font-body min-h-screen flex flex-col">
+
+  <!-- Top Navigation Bar -->
+  <nav class="fixed top-0 w-full z-50 h-[84px] bg-[#fafbfa]/95 backdrop-blur-md border-b border-slate-200 flex justify-between items-center px-6 md:px-10 shadow-sm">
+    <div class="flex items-center gap-3 md:gap-6">
+      <button id="aeris-menu-toggle" aria-label="Toggle Menu" class="p-2 rounded-xl text-slate-700 hover:text-emerald-700 hover:bg-slate-100 transition-colors flex items-center justify-center cursor-pointer">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+      <a href="/index.html" class="flex items-center gap-3 py-1">
+        <img src="/logo.png" alt="AERIS Logo" class="h-14 md:h-16 w-auto object-contain max-h-16 transition-transform hover:scale-105">
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="mt-[84px] p-6 md:p-10 flex-grow max-w-[1600px] w-full mx-auto pb-20">
+    
+    <header class="mb-8">
+      <h1 class="text-2xl md:text-3xl font-extrabold font-headline text-slate-900 mb-1">
+        AI Biomechanical Movement Dashboard
+      </h1>
+      <p class="text-slate-600 text-sm">
+        Upload video footage for 33-landmark pose estimation, kinematics tracking, and risk analysis.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left Column: Video Dropzone & Live Job Progress (5 Cols) -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+
+        <!-- Upload Dropzone Card -->
+        <div class="aeris-card p-6 border-2 border-dashed border-emerald-300 bg-emerald-50/50 hover:bg-emerald-50 transition-colors relative" id="upload-dropzone">
+          <input type="file" id="video-input" class="hidden" accept="video/mp4,video/avi,video/mov,video/mkv,video/wmv">
+          
+          <div class="flex flex-col items-center justify-center py-6 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mb-4 shadow-md">
+              <span class="material-symbols-outlined text-3xl">upload_file</span>
+            </div>
+            <h3 class="font-headline font-bold text-slate-900 text-lg mb-1">Drop Technical Footage Here</h3>
+            <p class="text-slate-500 text-xs mb-4">Supports MP4, AVI, MOV up to 4K / 120fps</p>
+            
+            <button onclick="document.getElementById('video-input').click()" class="btn-primary py-2.5 px-6 text-sm rounded-full">
+              Select Video File
+              <span class="material-symbols-outlined text-base">folder_open</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Job Status Panel -->
+        <div class="aeris-card p-6 bg-slate-900 text-white border-slate-800" id="job-status-panel">
+          <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              Analysis Pipeline Status
+            </span>
+            <span class="font-mono text-xs text-slate-400" id="current-job-id">Idle</span>
+          </div>
+
+          <div class="space-y-3 text-sm" id="status-step-list">
+            <div class="flex items-center gap-3 text-slate-400">
+              <span class="material-symbols-outlined text-base">info</span>
+              <span>Ready for video upload</span>
+            </div>
+          </div>
+
+          <!-- Progress Bar Container -->
+          <div class="mt-5 h-2 bg-slate-800 rounded-full overflow-hidden hidden" id="progress-bar-container">
+            <div class="h-full bg-emerald-500 rounded-full transition-all duration-300 w-0" id="progress-bar"></div>
+          </div>
+        </div>
+
+        <!-- Movement Scores Card -->
+        <div class="aeris-card p-6">
+          <h3 class="font-headline font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-emerald-600">fitness_center</span>
+            Movement Quality Indexes
+          </h3>
+
+          <div class="grid grid-cols-2 gap-4 text-center">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+              <div class="text-xs text-slate-500 font-semibold mb-1">Jump Stability</div>
+              <div class="text-2xl font-extrabold font-headline text-emerald-700" id="score-jump">88 / 100</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+              <div class="text-xs text-slate-500 font-semibold mb-1">Landing Impact</div>
+              <div class="text-2xl font-extrabold font-headline text-amber-600" id="score-landing">74 / 100</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+              <div class="text-xs text-slate-500 font-semibold mb-1">Gait Symmetry</div>
+              <div class="text-2xl font-extrabold font-headline text-emerald-700" id="score-gait">94 / 100</div>
+            </div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
+              <div class="text-xs text-slate-500 font-semibold mb-1">Sprint Mechanics</div>
+              <div class="text-2xl font-extrabold font-headline text-emerald-700" id="score-sprint">89 / 100</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Biomechanical Analysis Results (7 Cols) -->
+      <div class="lg:col-span-7 flex flex-col gap-6">
+
+        <!-- Overall Risk Radial Score Card -->
+        <div class="aeris-card p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-headline font-extrabold text-slate-900 text-xl">Overall Biomechanical Risk Score</h3>
+            </div>
+            <p class="text-slate-500 text-xs mb-4">Calculated from 33-landmark pose mechanics & joint torque load.</p>
+            
+            <div class="flex flex-wrap gap-2" id="risk-level-badge-container">
+              <span class="badge-mod"><span class="material-symbols-outlined text-sm">warning</span> Moderate Risk</span>
+            </div>
+          </div>
+
+          <!-- Gauge SVG -->
+          <div class="relative w-36 h-36 flex items-center justify-center shrink-0">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" fill="none" r="42" stroke="#e2e8f0" stroke-width="9"></circle>
+              <circle id="risk-gauge-circle" cx="50" cy="50" fill="none" r="42" stroke="#16a34a" stroke-dasharray="263.8" stroke-dashoffset="180" stroke-width="9" stroke-linecap="round"></circle>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <span class="font-headline text-3xl font-extrabold text-slate-900" id="overall-risk-val">28.4</span>
+              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider" id="overall-risk-lvl">LOW</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Body Region Risk Meters Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <!-- Knee Risk -->
+          <div class="aeris-card p-5">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Knee Kinematics</span>
+              <span class="text-xs font-mono font-bold text-red-600" id="knee-risk-val">24.5%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden mb-2">
+              <div class="h-full bg-emerald-500 rounded-full transition-all" id="knee-risk-bar" style="width: 24.5%;"></div>
+            </div>
+            <p class="text-xs text-slate-500" id="knee-risk-desc">ACL & Patellar load within safe parameters.</p>
+          </div>
+
+          <!-- Spine Risk -->
+          <div class="aeris-card p-5">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Lumbar Spine</span>
+              <span class="text-xs font-mono font-bold text-amber-600" id="spine-risk-val">18.2%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden mb-2">
+              <div class="h-full bg-emerald-500 rounded-full transition-all" id="spine-risk-bar" style="width: 18.2%;"></div>
+            </div>
+            <p class="text-xs text-slate-500" id="spine-risk-desc">Low eccentric flexion stress detected.</p>
+          </div>
+
+          <!-- Hip Risk -->
+          <div class="aeris-card p-5">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Hip Mobility</span>
+              <span class="text-xs font-mono font-bold text-emerald-600" id="hip-risk-val">15.0%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden mb-2">
+              <div class="h-full bg-emerald-500 rounded-full transition-all" id="hip-risk-bar" style="width: 15%;"></div>
+            </div>
+            <p class="text-xs text-slate-500" id="hip-risk-desc">Symmetric range of motion.</p>
+          </div>
+
+          <!-- Fatigue Index -->
+          <div class="aeris-card p-5">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Fatigue Index</span>
+              <span class="text-xs font-mono font-bold text-emerald-600" id="fatigue-risk-val">20.0%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden mb-2">
+              <div class="h-full bg-emerald-500 rounded-full transition-all" id="fatigue-risk-bar" style="width: 20%;"></div>
+            </div>
+            <p class="text-xs text-slate-500" id="fatigue-risk-desc">Velocity & endurance curve optimal.</p>
+          </div>
+
+        </div>
+
+        <!-- AI Physical Therapy Insights Card -->
+        <div class="aeris-card p-6">
+          <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-200">
+            <h3 class="font-headline font-bold text-slate-900 text-base flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-600">psychology</span>
+              Groq AI Recommendations
+            </h3>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">Live Synthesis</span>
+          </div>
+
+          <div class="space-y-3" id="ai-recommendations-list">
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-3 items-start">
+              <span class="material-symbols-outlined text-emerald-700 mt-0.5">check_circle</span>
+              <div>
+                <div class="text-sm font-bold text-slate-900">Gluteus Medius Activation Protocol</div>
+                <div class="text-xs text-slate-600 mt-0.5">Perform 3x12 lateral band walks prior to plyometric landing drills.</div>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-3 items-start">
+              <span class="material-symbols-outlined text-slate-600 mt-0.5">info</span>
+              <div>
+                <div class="text-sm font-bold text-slate-900">Eccentric Quadriceps Strengthening</div>
+                <div class="text-xs text-slate-600 mt-0.5">Incorporate Spanish squats to increase patellar tendon force absorption.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="/app.js"></script>
+  <script>
+    // Live Dashboard Upload & Polling Script
+    let activeJobId = null;
+    let pollTimer = null;
+
+    const dropzone = document.getElementById("upload-dropzone");
+    const fileInput = document.getElementById("video-input");
+
+    // Drag and Drop Event Listeners
+    ["dragenter", "dragover"].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.add("dropzone-active");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(evt => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("dropzone-active");
+      });
+    });
+
+    dropzone.addEventListener("drop", (e) => {
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        uploadVideoFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files[0]) {
+        uploadVideoFile(e.target.files[0]);
+      }
+    });
+
+    async function uploadVideoFile(file) {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      updateJobUI("queued", "Uploading " + file.name + "...", 15);
+      showToast("Uploading video for analysis: " + file.name, "info");
+
+      try {
+        const data = await apiRequest("/analyze", "POST", formData);
+        activeJobId = data.job_id;
+        document.getElementById("current-job-id").textContent = activeJobId.substring(0, 13) + "...";
+        showToast("Analysis job queued: ID " + activeJobId.substring(0, 8), "success");
+        
+        startJobPolling(activeJobId);
+      } catch (err) {
+        showToast("Failed to upload video: " + err.message, "error");
+        updateJobUI("failed", "Upload failed: " + err.message, 0);
+      }
+    }
+
+    function startJobPolling(jobId) {
+      if (pollTimer) clearInterval(pollTimer);
+
+      pollTimer = setInterval(async () => {
+        try {
+          const statusData = await apiRequest(`/status/${jobId}`, "GET");
+          const status = statusData.status;
+
+          if (status === "queued") {
+            updateJobUI("queued", "Video queued for MediaPipe pose estimation...", 30);
+          } else if (status === "processing") {
+            updateJobUI("processing", "Extracting 33-landmark biomechanical pose vectors...", 65);
+          } else if (status === "done") {
+            clearInterval(pollTimer);
+            updateJobUI("done", "Analysis complete! Report generated.", 100);
+            showToast("Analysis complete! Loading risk metrics...", "success");
+            fetchAndDisplayReport(jobId);
+          } else if (status === "failed") {
+            clearInterval(pollTimer);
+            updateJobUI("failed", "Analysis failed: " + (statusData.error || "Unknown error"), 0);
+            showToast("Analysis failed: " + (statusData.error || "Unknown error"), "error");
+          }
+        } catch (err) {
+          console.error("Polling error:", err);
+        }
+      }, 3000);
+    }
+
+    function updateJobUI(status, message, progress) {
+      const stepList = document.getElementById("status-step-list");
+      const progressBarContainer = document.getElementById("progress-bar-container");
+      const progressBar = document.getElementById("progress-bar");
+
+      progressBarContainer.classList.remove("hidden");
+      progressBar.style.width = progress + "%";
+
+      let icon = status === "done" ? "check_circle" : status === "failed" ? "error" : "refresh";
+      let iconClass = status === "processing" ? "animate-spin text-emerald-400" : "text-emerald-400";
+
+      stepList.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-base ${iconClass}">${icon}</span>
+          <span class="font-medium">${message}</span>
+        </div>
+      `;
+    }
+
+    async function fetchAndDisplayReport(jobId) {
+      try {
+        const report = await apiRequest(`/report/${jobId}`, "GET");
+        
+        // Update Overall Risk
+        const riskVal = report.overall_risk || 0;
+        const riskLevel = report.risk_level || "LOW";
+
+        document.getElementById("overall-risk-val").textContent = riskVal.toFixed(1);
+        document.getElementById("overall-risk-lvl").textContent = riskLevel;
+
+        const badgeContainer = document.getElementById("risk-level-badge-container");
+        badgeContainer.innerHTML = getRiskBadgeHTML(riskLevel, riskVal);
+
+        // Update Gauge Circle stroke offset (max dash = 263.8)
+        const gaugeCircle = document.getElementById("risk-gauge-circle");
+        const offset = 263.8 - (263.8 * (riskVal / 100));
+        gaugeCircle.style.strokeDashoffset = offset;
+        gaugeCircle.style.stroke = riskLevel === "HIGH" ? "#dc2626" : riskLevel === "MODERATE" ? "#d97706" : "#16a34a";
+
+        // Update Body Part Risk Bars
+        const bp = report.body_part_risks || {};
+        updateRiskBar("knee", bp.knee_risk || 0);
+        updateRiskBar("spine", bp.spine_risk || 0);
+        updateRiskBar("hip", bp.hip_risk || 0);
+        updateRiskBar("fatigue", bp.fatigue_risk || 0);
+
+        // Update Recommendations
+        const recList = document.getElementById("ai-recommendations-list");
+        const recs = report.recommendations || report.llm_recommendations || [];
+
+        if (recs.length > 0) {
+          recList.innerHTML = recs.map(r => `
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-3 items-start">
+              <span class="material-symbols-outlined text-emerald-700 mt-0.5">verified</span>
+              <div>
+                <div class="text-sm font-bold text-slate-900">${typeof r === 'string' ? r : r.title || 'Corrective Protocol'}</div>
+                <div class="text-xs text-slate-600 mt-0.5">${typeof r === 'object' ? r.details || '' : ''}</div>
+              </div>
+            </div>
+          `).join("");
+        }
+
+      } catch (err) {
+        showToast("Error loading report metrics: " + err.message, "error");
+      }
+    }
+
+    function updateRiskBar(prefix, score) {
+      const valElem = document.getElementById(`${prefix}-risk-val`);
+      const barElem = document.getElementById(`${prefix}-risk-bar`);
+
+      if (valElem && barElem) {
+        valElem.textContent = score.toFixed(1) + "%";
+        barElem.style.width = Math.min(score, 100) + "%";
+        barElem.className = "h-full rounded-full transition-all " + (score > 50 ? "bg-red-500" : score > 30 ? "bg-amber-500" : "bg-emerald-500");
+      }
+    }
+  </script>
+</body>
+</html>
