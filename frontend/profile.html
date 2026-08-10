@@ -239,7 +239,11 @@
 
       try {
         const updated = await apiRequest("/api/user/profile", "PUT", payload);
-        setAuthToken(getAuthToken(), updated);
+        if (window.updateUserDisplay) {
+          window.updateUserDisplay(updated);
+        } else {
+          setAuthToken(getAuthToken(), updated);
+        }
         showToast("Athlete profile updated successfully!", "success");
         loadProfileData();
       } catch (err) {

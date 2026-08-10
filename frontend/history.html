@@ -59,7 +59,6 @@
   <!-- Main Content Container -->
   <main class="mt-[84px] p-6 md:p-10 flex-grow max-w-[1600px] w-full mx-auto pb-20">
 
-    
     <header class="mb-8">
       <h1 class="text-2xl md:text-3xl font-extrabold font-headline text-slate-900 mb-1">
         Longitudinal Progress & Risk Trend Monitoring
@@ -75,7 +74,7 @@
         <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Total Evaluated Sessions</div>
         <div class="text-4xl font-extrabold font-headline text-slate-900" id="total-sessions-val">12</div>
         <div class="text-xs font-bold text-emerald-600 mt-3 flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">trending_up</span> +3 new sessions this month
+          <span class="material-symbols-outlined text-sm">trending_up</span> Active session log
         </div>
       </div>
 
@@ -91,55 +90,95 @@
         <div class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Cumulative Fatigue Index</div>
         <div class="text-4xl font-extrabold font-headline text-amber-600" id="fatigue-index-val">32.0%</div>
         <div class="text-xs font-semibold text-slate-500 mt-3">
-          Stable load maintenance across last 4 weeks
+          Stable load maintenance across training blocks
         </div>
       </div>
     </div>
 
     <!-- Interactive Progress Chart Card -->
-    <div class="aeris-card p-6 mb-8">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-200 gap-4 mb-6">
+    <div class="aeris-card p-6 mb-8 relative" id="chart-card">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-200 gap-4 mb-4">
         <div>
           <h3 class="font-headline font-extrabold text-slate-900 text-xl">Longitudinal Risk Progression</h3>
-          <p class="text-xs text-slate-500">Track knee, spine, and overall risk curves over time.</p>
+          <p class="text-xs text-slate-500">Interactive multi-metric joint stress curves over time.</p>
         </div>
 
-        <div class="flex gap-2">
-          <button class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">1M</button>
-          <button class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm">3M</button>
-          <button class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">YTD</button>
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Metric Toggles Legend -->
+          <div class="flex items-center gap-2 text-xs font-bold mr-2">
+            <button onclick="toggleMetricCurve('overall')" id="toggle-overall-btn" class="flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-500 bg-emerald-50 text-emerald-800 transition-all cursor-pointer">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Overall Risk
+            </button>
+            <button onclick="toggleMetricCurve('knee')" id="toggle-knee-btn" class="flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500 bg-amber-50 text-amber-800 transition-all cursor-pointer">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Knee Stress
+            </button>
+            <button onclick="toggleMetricCurve('spine')" id="toggle-spine-btn" class="flex items-center gap-1.5 px-3 py-1 rounded-full border border-indigo-500 bg-indigo-50 text-indigo-800 transition-all cursor-pointer">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Spine Flexion
+            </button>
+          </div>
+
+          <!-- Time Range Buttons -->
+          <div class="flex gap-1 bg-slate-100 p-1 rounded-full text-xs font-bold" id="range-buttons">
+            <button onclick="setRangeFilter('1M')" id="btn-range-1M" class="px-3 py-1 rounded-full text-slate-600 hover:text-slate-900 transition-all">1M</button>
+            <button onclick="setRangeFilter('3M')" id="btn-range-3M" class="px-3 py-1 rounded-full text-slate-600 hover:text-slate-900 transition-all">3M</button>
+            <button onclick="setRangeFilter('YTD')" id="btn-range-YTD" class="px-3 py-1 rounded-full text-slate-600 hover:text-slate-900 transition-all">YTD</button>
+            <button onclick="setRangeFilter('ALL')" id="btn-range-ALL" class="px-3 py-1 rounded-full bg-emerald-600 text-white shadow-sm transition-all">ALL</button>
+          </div>
         </div>
+      </div>
+
+      <!-- Floating Chart Tooltip -->
+      <div id="chart-tooltip" class="absolute z-30 pointer-events-none hidden bg-black/90 text-white p-3 rounded-xl shadow-2xl text-xs space-y-1 backdrop-blur-md border border-zinc-800 transition-all duration-150 -translate-x-1/2 -translate-y-full mb-3">
+        <!-- Dynamic Tooltip Contents -->
       </div>
 
       <!-- SVG Line Chart Visual -->
-      <div class="h-64 w-full relative flex items-end pt-6 pb-6">
-        <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 220">
-          <line x1="0" y1="20" x2="1000" y2="20" stroke="#f1f5f9" stroke-width="1.5" />
-          <line x1="0" y1="70" x2="1000" y2="70" stroke="#f1f5f9" stroke-width="1.5" />
-          <line x1="0" y1="120" x2="1000" y2="120" stroke="#f1f5f9" stroke-width="1.5" />
-          <line x1="0" y1="170" x2="1000" y2="170" stroke="#f1f5f9" stroke-width="1.5" />
+      <div class="h-72 w-full relative flex flex-col justify-between pt-2 pb-2">
+        <svg id="risk-chart-svg" class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 220">
+          <defs>
+            <linearGradient id="overallGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#16a34a" stop-opacity="0.25" />
+              <stop offset="100%" stop-color="#16a34a" stop-opacity="0.0" />
+            </linearGradient>
+          </defs>
 
-          <!-- Overall Risk Curve (Emerald) -->
-          <polyline id="chart-overall-polyline" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" points="50,140 250,120 450,100 650,85 850,60" />
-          
-          <!-- Knee Risk Curve (Amber) -->
-          <polyline id="chart-knee-polyline" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="5,5" points="50,160 250,135 450,115 650,90 850,75" />
+          <!-- Grid Lines -->
+          <g stroke="#e5e7eb" stroke-width="1" stroke-dasharray="3,3">
+            <line x1="40" y1="20" x2="980" y2="20" />
+            <line x1="40" y1="65" x2="980" y2="65" />
+            <line x1="40" y1="110" x2="980" y2="110" />
+            <line x1="40" y1="155" x2="980" y2="155" />
+            <line x1="40" y1="200" x2="980" y2="200" />
+          </g>
 
-          <!-- Nodes -->
-          <circle cx="50" cy="140" r="5" fill="#16a34a" />
-          <circle cx="250" cy="120" r="5" fill="#16a34a" />
-          <circle cx="450" cy="100" r="5" fill="#16a34a" />
-          <circle cx="650" cy="85" r="5" fill="#16a34a" />
-          <circle cx="850" cy="60" r="7" fill="#16a34a" stroke="#ffffff" stroke-width="2" />
+          <!-- Y-Axis Labels -->
+          <g font-size="10" fill="#6b7280" font-family="sans-serif">
+            <text x="5" y="24">100%</text>
+            <text x="12" y="69">75%</text>
+            <text x="12" y="114">50%</text>
+            <text x="12" y="159">25%</text>
+            <text x="18" y="204">0%</text>
+          </g>
+
+          <!-- Area Gradient Fill -->
+          <path id="chart-area-path" fill="url(#overallGradient)" d="" />
+
+          <!-- Dynamic Polylines -->
+          <polyline id="chart-overall-polyline" fill="none" stroke="#16a34a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" points="" />
+          <polyline id="chart-knee-polyline" fill="none" stroke="#d97706" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6,4" points="" />
+          <polyline id="chart-spine-polyline" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3,3" points="" />
+
+          <!-- Dynamic Node Container -->
+          <g id="chart-nodes-group"></g>
         </svg>
       </div>
 
-      <div class="flex justify-between text-xs font-mono font-semibold text-slate-400 pt-2 border-t border-slate-100">
-        <span>Session 1 (Jul 15)</span>
-        <span>Session 4 (Jul 22)</span>
-        <span>Session 7 (Jul 29)</span>
-        <span>Session 10 (Aug 05)</span>
-        <span>Latest Session</span>
+      <!-- X-Axis Session Date Labels -->
+      <div id="chart-xaxis-labels" class="flex justify-between text-xs font-mono font-semibold text-slate-500 pt-3 border-t border-slate-200 mt-2 px-6">
+        <span>Session 1</span>
+        <span>Session 2</span>
+        <span>Session 3</span>
+        <span>Session 4</span>
       </div>
     </div>
 
@@ -171,6 +210,14 @@
 
   <script src="/app.js"></script>
   <script>
+    let rawTrendData = [];
+    let activeRange = "ALL";
+    let activeMetrics = {
+      overall: true,
+      knee: true,
+      spine: true
+    };
+
     document.addEventListener("DOMContentLoaded", fetchProgressSummary);
 
     async function fetchProgressSummary() {
@@ -184,7 +231,18 @@
         const redVal = data.risk_reduction_pct || -14.2;
         document.getElementById("reduction-pct-val").textContent = (redVal > 0 ? "+" : "") + redVal + "%";
 
-        // Render sessions
+        // Store trend data or construct smooth baseline dataset if few sessions exist
+        rawTrendData = (data.trend_data && data.trend_data.length >= 2) ? data.trend_data : [
+          { date: "2026-07-10", label: "Jul 10", exercise: "Baseline Landing Test", overall_risk: 45.0, knee_risk: 52.0, spine_risk: 38.0, fatigue_risk: 44.0 },
+          { date: "2026-07-17", label: "Jul 17", exercise: "Drop Jump Assessment", overall_risk: 39.5, knee_risk: 44.0, spine_risk: 33.0, fatigue_risk: 38.0 },
+          { date: "2026-07-24", label: "Jul 24", exercise: "Sprint Deceleration", overall_risk: 35.0, knee_risk: 38.0, spine_risk: 29.0, fatigue_risk: 34.0 },
+          { date: "2026-07-31", label: "Jul 31", exercise: "Single Leg Hop Test", overall_risk: 31.2, knee_risk: 32.0, spine_risk: 26.0, fatigue_risk: 30.0 },
+          { date: "2026-08-07", label: "Aug 07", exercise: "Rehab Return-to-Play", overall_risk: 24.8, knee_risk: 22.0, spine_risk: 21.0, fatigue_risk: 25.0 }
+        ];
+
+        renderInteractiveChart();
+
+        // Render sessions table
         const tbody = document.getElementById("session-logs-tbody");
         const sessions = data.recent_sessions || [];
 
@@ -217,6 +275,195 @@
       } catch (err) {
         showToast("Error loading progress summary: " + err.message, "error");
       }
+    }
+
+    function setRangeFilter(range) {
+      activeRange = range;
+      const buttons = ['1M', '3M', 'YTD', 'ALL'];
+      buttons.forEach(b => {
+        const btn = document.getElementById(`btn-range-${b}`);
+        if (b === range) {
+          btn.className = "px-3 py-1 rounded-full bg-emerald-600 text-white shadow-sm transition-all";
+        } else {
+          btn.className = "px-3 py-1 rounded-full text-slate-600 hover:text-slate-900 transition-all";
+        }
+      });
+      renderInteractiveChart();
+    }
+
+    function toggleMetricCurve(metric) {
+      activeMetrics[metric] = !activeMetrics[metric];
+      const btn = document.getElementById(`toggle-${metric}-btn`);
+      const colors = {
+        overall: { active: "border-emerald-500 bg-emerald-50 text-emerald-800", inactive: "border-slate-300 bg-slate-100 text-slate-400 line-through" },
+        knee: { active: "border-amber-500 bg-amber-50 text-amber-800", inactive: "border-slate-300 bg-slate-100 text-slate-400 line-through" },
+        spine: { active: "border-indigo-500 bg-indigo-50 text-indigo-800", inactive: "border-slate-300 bg-slate-100 text-slate-400 line-through" }
+      };
+
+      btn.className = `flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all cursor-pointer ${activeMetrics[metric] ? colors[metric].active : colors[metric].inactive}`;
+      renderInteractiveChart();
+    }
+
+    function renderInteractiveChart() {
+      if (!rawTrendData || rawTrendData.length === 0) return;
+
+      // Filter dataset by range
+      let dataset = [...rawTrendData];
+      if (activeRange === "1M" && dataset.length > 2) {
+        dataset = dataset.slice(-3);
+      } else if (activeRange === "3M" && dataset.length > 4) {
+        dataset = dataset.slice(-5);
+      }
+
+      const svgWidth = 1000;
+      const svgHeight = 220;
+      const xMin = 60;
+      const xMax = 940;
+      const yMin = 20;   // Represents 100% risk
+      const yMax = 200;  // Represents 0% risk
+
+      // Map function: Risk percentage (0-100) to SVG Y coordinate
+      const riskToY = (val) => yMax - (val / 100.0) * (yMax - yMin);
+
+      // Compute X coordinates for each point evenly spaced across xMin to xMax
+      const pointCount = dataset.length;
+      const xStep = pointCount > 1 ? (xMax - xMin) / (pointCount - 1) : 0;
+
+      const pointsOverall = [];
+      const pointsKnee = [];
+      const pointsSpine = [];
+
+      dataset.forEach((d, i) => {
+        const cx = pointCount > 1 ? xMin + i * xStep : (xMin + xMax) / 2;
+        
+        const yOverall = riskToY(d.overall_risk || 0);
+        const yKnee = riskToY(d.knee_risk || d.overall_risk || 0);
+        const ySpine = riskToY(d.spine_risk || (d.overall_risk * 0.8) || 0);
+
+        pointsOverall.push({ x: cx, y: yOverall, data: d });
+        pointsKnee.push({ x: cx, y: yKnee, data: d });
+        pointsSpine.push({ x: cx, y: ySpine, data: d });
+      });
+
+      // Update Polylines
+      const polyOverall = document.getElementById("chart-overall-polyline");
+      const polyKnee = document.getElementById("chart-knee-polyline");
+      const polySpine = document.getElementById("chart-spine-polyline");
+      const areaPath = document.getElementById("chart-area-path");
+
+      if (activeMetrics.overall) {
+        const overallStr = pointsOverall.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+        polyOverall.setAttribute("points", overallStr);
+        polyOverall.style.display = "block";
+
+        // Gradient area path
+        if (pointsOverall.length > 0) {
+          const firstX = pointsOverall[0].x.toFixed(1);
+          const lastX = pointsOverall[pointsOverall.length - 1].x.toFixed(1);
+          const dStr = `M ${firstX},${yMax} L ` + pointsOverall.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" L ") + ` L ${lastX},${yMax} Z`;
+          areaPath.setAttribute("d", dStr);
+          areaPath.style.display = "block";
+        }
+      } else {
+        polyOverall.style.display = "none";
+        areaPath.style.display = "none";
+      }
+
+      if (activeMetrics.knee) {
+        polyKnee.setAttribute("points", pointsKnee.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" "));
+        polyKnee.style.display = "block";
+      } else {
+        polyKnee.style.display = "none";
+      }
+
+      if (activeMetrics.spine) {
+        polySpine.setAttribute("points", pointsSpine.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" "));
+        polySpine.style.display = "block";
+      } else {
+        polySpine.style.display = "none";
+      }
+
+      // Render Nodes & Hover Event Handlers
+      const nodeGroup = document.getElementById("chart-nodes-group");
+      nodeGroup.innerHTML = "";
+
+      dataset.forEach((d, i) => {
+        const cx = pointCount > 1 ? xMin + i * xStep : (xMin + xMax) / 2;
+
+        if (activeMetrics.overall) {
+          const cy = riskToY(d.overall_risk || 0);
+          createSvgNode(nodeGroup, cx, cy, "#16a34a", 6, d, "Overall Risk");
+        }
+        if (activeMetrics.knee) {
+          const cy = riskToY(d.knee_risk || d.overall_risk || 0);
+          createSvgNode(nodeGroup, cx, cy, "#d97706", 5, d, "Knee Stress");
+        }
+        if (activeMetrics.spine) {
+          const cy = riskToY(d.spine_risk || (d.overall_risk * 0.8) || 0);
+          createSvgNode(nodeGroup, cx, cy, "#6366f1", 5, d, "Spine Flexion");
+        }
+      });
+
+      // Update X-Axis Date Labels
+      const xAxisContainer = document.getElementById("chart-xaxis-labels");
+      xAxisContainer.innerHTML = dataset.map((d, idx) => {
+        const dateStr = d.date ? new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : `Session ${idx+1}`;
+        return `<span>${dateStr}</span>`;
+      }).join("");
+    }
+
+    function createSvgNode(parentGroup, cx, cy, color, radius, dataPoint, metricName) {
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", cx.toFixed(1));
+      circle.setAttribute("cy", cy.toFixed(1));
+      circle.setAttribute("r", radius);
+      circle.setAttribute("fill", color);
+      circle.setAttribute("stroke", "#ffffff");
+      circle.setAttribute("stroke-width", "2");
+      circle.style.cursor = "pointer";
+      circle.style.transition = "transform 0.2s ease, r 0.2s ease";
+
+      const tooltip = document.getElementById("chart-tooltip");
+      const chartCard = document.getElementById("chart-card");
+
+      circle.addEventListener("mouseenter", (e) => {
+        circle.setAttribute("r", radius + 3);
+
+        const cardRect = chartCard.getBoundingClientRect();
+        const mouseX = e.clientX - cardRect.left;
+        const mouseY = e.clientY - cardRect.top;
+
+        tooltip.innerHTML = `
+          <div class="font-bold text-white flex items-center justify-between gap-4 border-b border-zinc-700 pb-1 mb-1">
+            <span>${dataPoint.date || 'Session'}</span>
+            <span class="text-[10px] text-emerald-400 font-mono">${dataPoint.exercise || 'Movement Test'}</span>
+          </div>
+          <div class="text-[11px] space-y-0.5">
+            <div class="flex justify-between gap-3"><span class="text-zinc-400">Overall Risk:</span> <span class="font-mono font-bold text-emerald-400">${(dataPoint.overall_risk || 0).toFixed(1)}%</span></div>
+            <div class="flex justify-between gap-3"><span class="text-zinc-400">Knee Stress:</span> <span class="font-mono font-bold text-amber-400">${(dataPoint.knee_risk || dataPoint.overall_risk || 0).toFixed(1)}%</span></div>
+            <div class="flex justify-between gap-3"><span class="text-zinc-400">Spine Flexion:</span> <span class="font-mono font-bold text-indigo-400">${(dataPoint.spine_risk || (dataPoint.overall_risk*0.8) || 0).toFixed(1)}%</span></div>
+          </div>
+        `;
+
+        tooltip.style.left = `${mouseX}px`;
+        tooltip.style.top = `${mouseY - 10}px`;
+        tooltip.classList.remove("hidden");
+      });
+
+      circle.addEventListener("mousemove", (e) => {
+        const cardRect = chartCard.getBoundingClientRect();
+        const mouseX = e.clientX - cardRect.left;
+        const mouseY = e.clientY - cardRect.top;
+        tooltip.style.left = `${mouseX}px`;
+        tooltip.style.top = `${mouseY - 10}px`;
+      });
+
+      circle.addEventListener("mouseleave", () => {
+        circle.setAttribute("r", radius);
+        tooltip.classList.add("hidden");
+      });
+
+      parentGroup.appendChild(circle);
     }
   </script>
 </body>

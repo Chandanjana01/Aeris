@@ -266,35 +266,52 @@
     let activeJobId = null;
     let pollTimer = null;
 
-    const dropzone = document.getElementById("upload-dropzone");
-    const fileInput = document.getElementById("video-input");
+    document.addEventListener("DOMContentLoaded", () => {
+      const dropzone = document.getElementById("upload-dropzone");
+      const fileInput = document.getElementById("video-input");
 
-    // Drag and Drop Event Listeners
-    ["dragenter", "dragover"].forEach(evt => {
-      dropzone.addEventListener(evt, (e) => {
-        e.preventDefault();
-        dropzone.classList.add("dropzone-active");
-      });
-    });
+      if (dropzone && fileInput) {
+        ["dragenter", "dragover"].forEach(evt => {
+          dropzone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dropzone.classList.add("dropzone-active");
+          });
+        });
 
-    ["dragleave", "drop"].forEach(evt => {
-      dropzone.addEventListener(evt, (e) => {
-        e.preventDefault();
-        dropzone.classList.remove("dropzone-active");
-      });
-    });
+        ["dragleave", "drop"].forEach(evt => {
+          dropzone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dropzone.classList.remove("dropzone-active");
+          });
+        });
 
-    dropzone.addEventListener("drop", (e) => {
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        uploadVideoFile(e.dataTransfer.files[0]);
+        dropzone.addEventListener("drop", (e) => {
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            uploadVideoFile(e.dataTransfer.files[0]);
+          }
+        });
+
+        fileInput.addEventListener("change", (e) => {
+          if (e.target.files && e.target.files[0]) {
+            uploadVideoFile(e.target.files[0]);
+          }
+        });
       }
+
+      loadLatestReportOnDashboard();
     });
 
-    fileInput.addEventListener("change", (e) => {
-      if (e.target.files && e.target.files[0]) {
-        uploadVideoFile(e.target.files[0]);
+    async function loadLatestReportOnDashboard() {
+      try {
+        const res = await apiRequest("/reports", "GET");
+        const reports = res.reports || [];
+        if (reports.length > 0 && reports[0].job_id) {
+          fetchAndDisplayReport(reports[0].job_id);
+        }
+      } catch (err) {
+        console.log("[AERIS Dashboard] Initial report fetch info:", err.message);
       }
-    });
+    }
 
     async function uploadVideoFile(file) {
       const formData = new FormData();

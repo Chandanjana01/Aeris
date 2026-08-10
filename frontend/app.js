@@ -113,20 +113,44 @@ function getRiskBadgeHTML(riskLevel, score = null) {
   }
 }
 
-// Global user profile initialization across headers & navigation binding
-document.addEventListener("DOMContentLoaded", () => {
-  const user = getCurrentUser();
+// Global user profile display updater across headers & drawer navigation
+function updateUserDisplay(user) {
+  if (!user) return;
+  localStorage.setItem("aeris_user", JSON.stringify(user));
+  
   const userNameElems = document.querySelectorAll(".user-display-name");
   const userRoleElems = document.querySelectorAll(".user-display-role");
   const userAvatarElems = document.querySelectorAll(".user-display-avatar");
 
+  const initials = (user.full_name || "Alex Morgan")
+    .split(" ")
+    .filter(Boolean)
+    .map(n => n[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
+
+  userNameElems.forEach(el => el.textContent = user.full_name || "Alex Morgan");
+  userRoleElems.forEach(el => el.textContent = user.role ? user.role.toUpperCase() : "ATHLETE");
+  userAvatarElems.forEach(el => el.textContent = initials || "AM");
+}
+window.updateUserDisplay = updateUserDisplay;
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Initialize mobile navigation drawer FIRST so elements exist in DOM
+  initMobileDrawer();
+
+  const user = getCurrentUser();
   if (user) {
-    userNameElems.forEach(el => el.textContent = user.full_name || "Athlete");
-    userRoleElems.forEach(el => el.textContent = user.role ? user.role.toUpperCase() : "ATHLETE");
-    userAvatarElems.forEach(el => {
-      const initials = (user.full_name || "A").split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase();
-      el.textContent = initials;
-    });
+    updateUserDisplay(user);
+  }
+
+  if (getAuthToken()) {
+    apiRequest("/api/user/profile", "GET")
+      .then(latestUser => {
+        updateUserDisplay(latestUser);
+      })
+      .catch(err => console.log("[AERIS] Profile sync error:", err));
   }
 
   // Enforce profile navigation when clicking avatar or user display name
@@ -138,9 +162,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "/profile.html";
     });
   });
-
-  // Initialize mobile navigation drawer
-  initMobileDrawer();
 });
 
 // ── Hamburger Mobile Drawer Engine ─────────────────────────────────────
@@ -201,6 +222,8 @@ function initMobileDrawer() {
     document.body.appendChild(drawerOverlay);
 
     const openDrawer = () => {
+      const u = getCurrentUser();
+      if (u) updateUserDisplay(u);
       drawerOverlay.classList.remove("hidden");
       requestAnimationFrame(() => {
         drawerOverlay.classList.remove("opacity-0");

@@ -334,7 +334,11 @@
 
       try {
         const updated = await apiRequest("/api/user/profile", "PUT", payload);
-        setAuthToken(getAuthToken(), updated);
+        if (window.updateUserDisplay) {
+          window.updateUserDisplay(updated);
+        } else {
+          setAuthToken(getAuthToken(), updated);
+        }
         showToast("Kinematic baselines calibrated and saved!", "success");
         loadSettingsData();
       } catch (err) {
