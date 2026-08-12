@@ -11,9 +11,10 @@ import threading
 import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, UploadFile, Request
 
 from api.job_store import create_job, update_job
+from api.limiter import limiter
 from api.models.schemas import AnalyzeResponse, JobStatus
 
 router = APIRouter()
@@ -47,7 +48,9 @@ def _run_pipeline(job_id: str, video_path: str, output_name: str) -> None:
 
 
 @router.post("/analyze", response_model=AnalyzeResponse, summary="Upload a video and start analysis")
-async def analyze_video(file: UploadFile = File(...)):
+@limiter.limit("10/minute")
+async def analyze_video(request: Request, file: UploadFile = File(...)):
+
     """
     Upload a video file (.mp4 / .avi / .mov / .mkv / .wmv).
 

@@ -23,9 +23,12 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from fastapi.staticfiles import StaticFiles
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
+from api.limiter import limiter, rate_limit_exceeded_handler
 from api.routes import analyze, auth, progress, recommendations, report, status
 
 app = FastAPI(
@@ -38,6 +41,10 @@ app = FastAPI(
     contact={"name": "AERIS Movement Intelligence"},
 )
 
+# Attach slowapi rate limiter to app state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
+
 # Allow any frontend / Postman / mobile app to call the API
 app.add_middleware(
     CORSMiddleware,
@@ -46,6 +53,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(SlowAPIMiddleware)
+
 
 # ── Register routers ───────────────────────────────────────────────────────
 app.include_router(auth.router,            tags=["0. Authentication"])

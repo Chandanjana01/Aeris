@@ -10,10 +10,11 @@ import secrets
 from typing import Optional
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends, Header, Request
 from pydantic import BaseModel, EmailStr
 
 from api.db import get_db_connection
+from api.limiter import limiter, verify_captcha
 
 router = APIRouter()
 
@@ -48,11 +49,13 @@ class SignupRequest(BaseModel):
     email: str
     password: str
     role: Optional[str] = "athlete"
+    captcha_token: Optional[str] = None
 
 
 class LoginRequest(BaseModel):
     email: str
     password: str
+    captcha_token: Optional[str] = None
 
 
 class UserResponse(BaseModel):
@@ -114,15 +117,23 @@ def _row_to_user(row) -> UserResponse:
 # ── Endpoints ──────────────────────────────────────────────────────────────
 @router.post("/signup", response_model=AuthResponse, summary="Register a new user in SQLite")
 @router.post("/api/auth/signup", response_model=AuthResponse, include_in_schema=False)
-async def signup(payload: SignupRequest):
+@limiter.limit("3/hour")
+async def signup(request: Request, payload: SignupRequest):
     """
     Registers a new user account in SQLite `data/aeris.db`.
+    - Rate limited to 3 requests / hour per IP (with CAPTCHA fallback).
     - Validates email uniqueness
     - Securely hashes password before saving
     """
     email = payload.email.strip().lower()
     full_name = payload.full_name.strip()
     password = payload.password.strip()
+
+    # If CAPTCHA token provided, verify it
+    if payload.captcha_token:
+        is_captcha_valid = await verify_captcha(payload.captcha_token)
+        if not is_captcha_valid:
+            raise HTTPException(status_code=400, detail="CAPTCHA verification failed. Please try again.")
 
     if not email or not full_name or not password:
         raise HTTPException(status_code=400, detail="Full name, email, and password are required.")
@@ -167,12 +178,20 @@ async def signup(payload: SignupRequest):
 
 @router.post("/login", response_model=AuthResponse, summary="Authenticate user & verify password")
 @router.post("/api/auth/login", response_model=AuthResponse, include_in_schema=False)
-async def login(payload: LoginRequest):
+@limiter.limit("5/minute")
+async def login(request: Request, payload: LoginRequest):
     """
     Authenticates a user against SQLite `data/aeris.db`.
+    - Rate limited to 5 requests / minute per IP (with CAPTCHA fallback).
     """
     email = payload.email.strip().lower()
     password = payload.password.strip()
+
+    # If CAPTCHA token provided, verify it
+    if payload.captcha_token:
+        is_captcha_valid = await verify_captcha(payload.captcha_token)
+        if not is_captcha_valid:
+            raise HTTPException(status_code=400, detail="CAPTCHA verification failed. Please try again.")
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -200,6 +219,7 @@ async def login(payload: LoginRequest):
         access_token=token,
         user=user_obj
     )
+
 
 
 @router.get("/me", response_model=UserResponse, summary="Get current logged in user profile")

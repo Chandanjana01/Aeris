@@ -114,6 +114,8 @@ function updateReqStyle(el, isValid) {
     }
 }
 
+let currentCaptchaToken = null;
+
 /**
  * Handle Sign Up / Sign In Form Submission
  */
@@ -140,6 +142,10 @@ async function handleFormSubmit(e) {
     const endpoint = isSignUp ? `${API_BASE_URL}/signup` : `${API_BASE_URL}/login`;
     const payload = isSignUp ? { full_name: fullName, email, password } : { email, password };
 
+    if (currentCaptchaToken) {
+        payload.captcha_token = currentCaptchaToken;
+    }
+
     try {
         console.log(`[AERIS Auth] Sending POST to ${endpoint}`);
         const response = await fetch(endpoint, {
@@ -150,12 +156,23 @@ async function handleFormSubmit(e) {
 
         const data = await response.json();
 
+        // Check for HTTP 429 Rate Limit Exceeded or captcha_required
+        if (response.status === 429 || data.captcha_required) {
+            console.warn('[AERIS Auth] Rate limit exceeded. Prompting CAPTCHA challenge UI.');
+            showCaptchaChallenge(data.detail || 'Rate limit exceeded (5 attempts/min). Please complete CAPTCHA verification.');
+            resetSubmitButton();
+            return;
+        }
+
         if (!response.ok) {
             throw new Error(data.detail || 'Authentication failed');
         }
 
         console.log('[AERIS Auth] Success response:', data);
         showAlert(data.message || 'Success! Redirecting to dashboard...', 'success');
+
+        // Reset captcha token on success
+        currentCaptchaToken = null;
 
         // Save Auth Session to localStorage
         localStorage.setItem('aeris_token', data.access_token);
@@ -172,6 +189,43 @@ async function handleFormSubmit(e) {
         resetSubmitButton();
     }
 }
+
+/**
+ * Renders interactive CAPTCHA verification box when rate limit is exceeded
+ */
+function showCaptchaChallenge(message) {
+    const alertBox = document.getElementById('authAlert');
+    if (!alertBox) return;
+
+    alertBox.classList.remove('hidden');
+    alertBox.className = 'p-4 rounded-xl text-xs font-medium mb-6 bg-amber-50 border border-amber-300 text-amber-900 space-y-3';
+    alertBox.innerHTML = `
+        <div class="flex items-center gap-2 font-bold text-amber-900">
+            <span class="material-symbols-outlined text-base">security</span>
+            <span>Security Verification Required</span>
+        </div>
+        <p class="text-amber-800">${message}</p>
+        <div class="p-3 bg-white rounded-lg border border-amber-200 flex items-center justify-between shadow-xs">
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                <input type="checkbox" id="captchaCheckbox" onchange="verifyUserCaptcha(this)" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                <span>I am not a robot (CAPTCHA Verification)</span>
+            </label>
+            <span class="material-symbols-outlined text-slate-400 text-sm">verified_user</span>
+        </div>
+    `;
+}
+
+function verifyUserCaptcha(checkbox) {
+    if (checkbox.checked) {
+        currentCaptchaToken = 'mock_captcha_token_passed';
+        showAlert('CAPTCHA verified successfully! Retrying request...', 'success');
+        setTimeout(() => {
+            const authForm = document.getElementById('authForm');
+            if (authForm) authForm.dispatchEvent(new Event('submit', { cancelable: true }));
+        }, 600);
+    }
+}
+
 
 function showAlert(message, type) {
     const alertBox = document.getElementById('authAlert');

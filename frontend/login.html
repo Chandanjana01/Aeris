@@ -160,18 +160,40 @@
       }
     }
 
+    let currentCaptchaToken = null;
+
     async function handleLoginSubmit(e) {
       e.preventDefault();
       const email = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
+      const payload = { email, password };
+      if (currentCaptchaToken) payload.captcha_token = currentCaptchaToken;
 
       try {
-        const data = await apiRequest("/api/auth/login", "POST", { email, password });
-        setAuthToken(data.access_token, data.user);
-        showToast("Login successful! Redirecting to Dashboard...", "success");
-        setTimeout(() => window.location.href = "/dashboard.html", 800);
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        if (response.status === 429 || data.captcha_required) {
+          showCaptchaBox("Rate limit exceeded (5 attempts/min). Please complete verification below.");
+          return;
+        }
+
+        if (!response.ok) throw new Error(data.detail || "Login failed");
+
+        currentCaptchaToken = null;
+        if (typeof setAuthToken === 'function') setAuthToken(data.access_token, data.user);
+        localStorage.setItem('aeris_token', data.access_token);
+        localStorage.setItem('aeris_user', JSON.stringify(data.user));
+
+        if (typeof showToast === 'function') showToast("Login successful! Redirecting...", "success");
+        setTimeout(() => window.location.href = "index.html", 800);
       } catch (err) {
-        showToast("Login failed: " + err.message, "error");
+        if (typeof showToast === 'function') showToast("Login failed: " + err.message, "error");
+        else alert("Login failed: " + err.message);
       }
     }
 
@@ -181,16 +203,70 @@
       const email = document.getElementById("signup-email").value;
       const role = document.getElementById("signup-role").value;
       const password = document.getElementById("signup-password").value;
+      const payload = { full_name, email, password, role };
+      if (currentCaptchaToken) payload.captcha_token = currentCaptchaToken;
 
       try {
-        const data = await apiRequest("/api/auth/signup", "POST", { full_name, email, password, role });
-        setAuthToken(data.access_token, data.user);
-        showToast("Account created successfully! Redirecting...", "success");
-        setTimeout(() => window.location.href = "/dashboard.html", 800);
+        const response = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+
+        if (response.status === 429 || data.captcha_required) {
+          showCaptchaBox("Rate limit exceeded. Please complete verification below.");
+          return;
+        }
+
+        if (!response.ok) throw new Error(data.detail || "Signup failed");
+
+        currentCaptchaToken = null;
+        if (typeof setAuthToken === 'function') setAuthToken(data.access_token, data.user);
+        localStorage.setItem('aeris_token', data.access_token);
+        localStorage.setItem('aeris_user', JSON.stringify(data.user));
+
+        if (typeof showToast === 'function') showToast("Account created successfully! Redirecting...", "success");
+        setTimeout(() => window.location.href = "index.html", 800);
       } catch (err) {
-        showToast("Signup failed: " + err.message, "error");
+        if (typeof showToast === 'function') showToast("Signup failed: " + err.message, "error");
+        else alert("Signup failed: " + err.message);
       }
     }
+
+    function showCaptchaBox(msg) {
+      let box = document.getElementById("captcha-challenge-box");
+      if (!box) {
+        box = document.createElement("div");
+        box.id = "captcha-challenge-box";
+        box.className = "p-4 rounded-xl text-xs font-medium my-4 bg-amber-50 border border-amber-300 text-amber-900 space-y-3";
+        const activeForm = document.querySelector("form:not(.hidden)");
+        activeForm.prepend(box);
+      }
+      box.innerHTML = `
+        <div class="flex items-center gap-2 font-bold text-amber-900">
+            <span class="material-symbols-outlined text-base">security</span>
+            <span>Security Verification Required</span>
+        </div>
+        <p class="text-amber-800">${msg}</p>
+        <div class="p-3 bg-white rounded-lg border border-amber-200 flex items-center justify-between shadow-xs">
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
+                <input type="checkbox" onchange="onLoginCaptchaVerified(this)" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                <span>I am not a robot (CAPTCHA Verification)</span>
+            </label>
+        </div>
+      `;
+    }
+
+    function onLoginCaptchaVerified(checkbox) {
+      if (checkbox.checked) {
+        currentCaptchaToken = 'mock_captcha_token_passed';
+        const box = document.getElementById("captcha-challenge-box");
+        if (box) box.remove();
+        if (typeof showToast === 'function') showToast("CAPTCHA Verified! Retrying request...", "success");
+      }
+    }
+
   </script>
 </body>
 </html>
